@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using FluentAssertions;
 using Moq;
 using Prism.Events;
@@ -7,7 +8,6 @@ using StorageSimulator.Core.Interfaces;
 using StorageSimulator.Core.Model;
 using StorageSimulator.Core.Types;
 using Xunit;
-using MovementRequest = StorageSimulator.Core.Model.MovementRequest;
 
 namespace StorageSimulatorTests.Model
 {
@@ -17,14 +17,18 @@ namespace StorageSimulatorTests.Model
         private IEventAggregator _eventAggregator;
         private Mock<IWatchRequestUseCase> _watchUseCase;
         private Mock<ISendResponseUseCase> _sendUseCase;
+        private Mock<IAnalyseRequestUseCase> _requestAnalyser;
 
         public StorageSystemTest()
         {
             _watchUseCase = new Mock<IWatchRequestUseCase>();
             _sendUseCase = new Mock<ISendResponseUseCase>();
-
+            _requestAnalyser = new Mock<IAnalyseRequestUseCase>();
             _eventAggregator = new EventAggregator();
-            _storageSystem = new StorageSystem(_watchUseCase.Object, _sendUseCase.Object, _eventAggregator);
+            
+            _storageSystem = new StorageSystem(_watchUseCase.Object, _sendUseCase.Object, _requestAnalyser.Object, _eventAggregator);
+
+            _requestAnalyser.Setup(a => a.Analyse(It.IsAny<MovementRequest>())).Returns(new MovementResponse());
         }
         
         [Fact]
@@ -39,32 +43,45 @@ namespace StorageSimulatorTests.Model
         {
             MovementResponse sentResponse = null;
             _sendUseCase.Setup(u => u.Execute(It.IsAny<MovementResponse>())).Callback<MovementResponse>(response => sentResponse = response);
-            var requestEvent = _eventAggregator.GetEvent<PubSubEvent<StorageSimulator.Core.Events.MovementRequest>>();
+            var requestEvent = _eventAggregator.GetEvent<PubSubEvent<MovementRequestEvent>>();
             var movement = new MovementRequest
             {
                 Info = "info", Quantity = 2, Source = "source", Target = "target", Task = AutomationTasks.Insert,
                 Ticket = Guid.NewGuid(), Timestamp = DateTime.UtcNow, SourceCompartment = "4", TargetCompartment = "2"
             };
-            var movementRequest = new StorageSimulator.Core.Events.MovementRequest{Request = movement};
+            var movementRequest = new MovementRequestEvent{Request = movement};
             
             requestEvent.Publish(movementRequest);
 
             sentResponse.Should().NotBeNull();
-            sentResponse.Info.Should().Be("info");
-            sentResponse.Quantity.Should().Be(2);
-            sentResponse.Source.Should().Be("source");
-            sentResponse.Target.Should().Be("target");
-            sentResponse.Status.Should().Be(AutomationStatus.InsertionSucceeded);
-            sentResponse.Ticket.Should().Be(movement.Ticket);
-            sentResponse.Timestamp.Should().NotBeOnOrAfter(DateTime.UtcNow);
-            sentResponse.SourceCompartment.Should().Be("4");
-            sentResponse.TargetCompartment.Should().Be("2");
         }
 
         [Fact]
-        public void METHOD()
+        public void ReceivingRequestShouldCallRequestAnalyser()
         {
+            var request = new MovementRequest
+            {
+                Ticket = Guid.NewGuid(), Data = new MovementData {Barcode = "12345"}, Info = "part in new storage point", Quantity = 1, Target = "TV01",
+                TargetCompartment = "1"
+            };
+            var movementRequest = new MovementRequestEvent{Request = request};
+            var requestEvent = _eventAggregator.GetEvent<PubSubEvent<MovementRequestEvent>>();
             
+            requestEvent.Publish(movementRequest);
+
+            _requestAnalyser.Verify(a => a.Analyse(request));
+        }
+
+        [Fact]
+        public void AddStoragePointShouldAddStoragePoint()
+        {
+            var expected = new StoragePoint();
+            
+            _storageSystem.AddStoragePoint(expected);
+
+            _storageSystem.StoragePoints.Count.Should().Be(1);
+            var storagePoint = _storageSystem.StoragePoints.First();
+            storagePoint.Should().Be(expected);
         }
 
     }

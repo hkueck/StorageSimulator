@@ -64,8 +64,8 @@ namespace StorageSimulator.Core.UseCases
 
         private void SendRequest(MovementRequest request)
         {
-            var movementRequest = new Events.MovementRequest{Request = request};
-            var requestEvent = _eventAggregator.GetEvent<PubSubEvent<Events.MovementRequest>>();
+            var movementRequest = new Events.MovementRequestEvent{Request = request};
+            var requestEvent = _eventAggregator.GetEvent<PubSubEvent<Events.MovementRequestEvent>>();
             requestEvent.Publish(movementRequest);
         }
     }

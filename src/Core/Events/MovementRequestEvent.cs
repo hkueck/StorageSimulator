@@ -2,7 +2,7 @@ using StorageSimulator.Core.Model;
 
 namespace StorageSimulator.Core.Events
 {
-    public class MovementRequest
+    public class MovementRequestEvent
     {
         public Model.MovementRequest Request { get; set; }
     }

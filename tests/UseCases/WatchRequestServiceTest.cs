@@ -25,7 +25,7 @@ namespace StorageSimulatorTests.UseCases
             var requestFile = $"{_watchpath}1/MovementRequest_V.XML";
             DeleteMovementDirectory($"{_watchpath}1");
             var eventAggregator = new Mock<IEventAggregator>();
-            eventAggregator.Setup(e => e.GetEvent<PubSubEvent<StorageSimulator.Core.Events.MovementRequest>>()).Returns(requestEvent);
+            eventAggregator.Setup(e => e.GetEvent<PubSubEvent<StorageSimulator.Core.Events.MovementRequestEvent>>()).Returns(requestEvent);
             var config = new Mock<IStorageSimulatorConfig>();
             config.Setup(c => c.CommunicationPath).Returns($"{_watchpath}1");
             var service = new WatchRequestService(eventAggregator.Object, config.Object);
@@ -34,7 +34,7 @@ namespace StorageSimulatorTests.UseCases
             CreateMovementRequest(requestFile);
 
             Task.Delay(25).Wait();
-            eventAggregator.Verify(e => e.GetEvent<PubSubEvent<StorageSimulator.Core.Events.MovementRequest>>());
+            eventAggregator.Verify(e => e.GetEvent<PubSubEvent<StorageSimulator.Core.Events.MovementRequestEvent>>());
             requestEvent.PublishCalled.Should().BeTrue();
         }
 
@@ -46,7 +46,7 @@ namespace StorageSimulatorTests.UseCases
             var requestFile = $"{_watchpath}/MovementRequest_V.XML";
             DeleteMovementDirectory(_watchpath);
             var eventAggregator = new Mock<IEventAggregator>();
-            eventAggregator.Setup(e => e.GetEvent<PubSubEvent<StorageSimulator.Core.Events.MovementRequest>>()).Returns(requestEvent);
+            eventAggregator.Setup(e => e.GetEvent<PubSubEvent<StorageSimulator.Core.Events.MovementRequestEvent>>()).Returns(requestEvent);
             var config = new Mock<IStorageSimulatorConfig>();
             config.Setup(c => c.CommunicationPath).Returns(_watchpath);
             var service = new WatchRequestService(eventAggregator.Object, config.Object);
@@ -56,13 +56,13 @@ namespace StorageSimulatorTests.UseCases
             File.Move(tempFile, requestFile);
 
             Task.Delay(25).Wait();
-            eventAggregator.Verify(e => e.GetEvent<PubSubEvent<StorageSimulator.Core.Events.MovementRequest>>());
+            eventAggregator.Verify(e => e.GetEvent<PubSubEvent<StorageSimulator.Core.Events.MovementRequestEvent>>());
             requestEvent.PublishCalled.Should().BeTrue();
         }
 
-        class EventMock : PubSubEvent<StorageSimulator.Core.Events.MovementRequest>
+        class EventMock : PubSubEvent<StorageSimulator.Core.Events.MovementRequestEvent>
         {
-            public override void Publish(StorageSimulator.Core.Events.MovementRequest payload)
+            public override void Publish(StorageSimulator.Core.Events.MovementRequestEvent payload)
             {
                 PublishCalled = true;
             }

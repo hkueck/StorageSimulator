@@ -10,32 +10,34 @@ namespace StorageSimulator.Core.Model
     {
         private readonly IWatchRequestUseCase _watchRequestUseCase;
         private readonly ISendResponseUseCase _sendUseCase;
+        private readonly IAnalyseRequestUseCase _analyseRequestUseCase;
         private readonly IEventAggregator _eventAggregator;
 
         public IList<Store> Stores { get; set; }
-        public IList<StoragePoint> StoragePoints { get; set; }
+        public IList<StoragePoint> StoragePoints { get; set; } = new List<StoragePoint>();
         
-        public StorageSystem(IWatchRequestUseCase watchRequestUseCase, ISendResponseUseCase sendUseCase, IEventAggregator eventAggregator)
+        public StorageSystem(IWatchRequestUseCase watchRequestUseCase, ISendResponseUseCase sendUseCase, IAnalyseRequestUseCase analyseRequestUseCase,
+            IEventAggregator eventAggregator)
         {
             _eventAggregator = eventAggregator;
-            var requestEvent = _eventAggregator.GetEvent<PubSubEvent<Events.MovementRequest>>();
+            var requestEvent = _eventAggregator.GetEvent<PubSubEvent<Events.MovementRequestEvent>>();
             requestEvent.Subscribe(OnMovementRequest);
             _watchRequestUseCase = watchRequestUseCase;
             _sendUseCase = sendUseCase;
+            _analyseRequestUseCase = analyseRequestUseCase;
             _watchRequestUseCase.Execute();
         }
 
-        private void OnMovementRequest(Events.MovementRequest request)
+        private void OnMovementRequest(Events.MovementRequestEvent movementRequestEvent)
         {
-            var movement = request.Request;
-            
-            var response = new MovementResponse()
-            {
-                Info = movement.Info, Quantity = movement.Quantity, Source = movement.Source, Status = AutomationStatus.InsertionSucceeded,
-                Target = movement.Target, Ticket = movement.Ticket, Timestamp = DateTime.UtcNow,
-                SourceCompartment = movement.SourceCompartment, TargetCompartment = movement.TargetCompartment
-            };
+            var movement = movementRequestEvent.Request;
+            var response = _analyseRequestUseCase.Analyse(movement);
             _sendUseCase.Execute(response);
+        }
+
+        public void AddStoragePoint(StoragePoint storagePoint)
+        {
+            StoragePoints.Add(storagePoint);
         }
     }
 }
