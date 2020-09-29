@@ -1,0 +1,5 @@
+/src/bin/Debug/netcoreapp3.1/
+/src/obj/
+/tests/bin/Debug/netcoreapp3.1/
+/tests/obj/
+/.idea/.idea.StorageSimulator/
