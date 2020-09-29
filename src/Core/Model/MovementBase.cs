@@ -1,4 +1,5 @@
 using System;
+using System.Xml.Serialization;
 
 namespace StorageSimulator.Core.Model
 {
@@ -12,5 +13,12 @@ namespace StorageSimulator.Core.Model
         public DateTime Timestamp { get; set; }
         public string Info { get; set; }
         public int Quantity { get; set; }
+        public MovementData Data { get; set; }
+    }
+
+    public class MovementData
+    {
+        [XmlAttribute] public string Index { get; set; } = "1";
+        public string Barcode { get; set; }
     }
 }

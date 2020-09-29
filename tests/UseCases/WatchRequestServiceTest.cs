@@ -75,7 +75,7 @@ namespace StorageSimulatorTests.UseCases
             XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
             ns.Add("","");
             var serializer = new XmlSerializer(typeof(MovementRequest));
-            var movement = new MovementRequest();
+            var movement = new MovementRequest{Data = new MovementData{Barcode = "12345"}};
             var settings = new XmlWriterSettings();
             settings.Indent = true;
             settings.OmitXmlDeclaration = true;

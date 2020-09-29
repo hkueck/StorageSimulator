@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Prism.Events;
 using StorageSimulator.Core.Interfaces;
 using StorageSimulator.Core.Types;
@@ -11,6 +12,9 @@ namespace StorageSimulator.Core.Model
         private readonly ISendResponseUseCase _sendUseCase;
         private readonly IEventAggregator _eventAggregator;
 
+        public IList<Store> Stores { get; set; }
+        public IList<StoragePoint> StoragePoints { get; set; }
+        
         public StorageSystem(IWatchRequestUseCase watchRequestUseCase, ISendResponseUseCase sendUseCase, IEventAggregator eventAggregator)
         {
             _eventAggregator = eventAggregator;
