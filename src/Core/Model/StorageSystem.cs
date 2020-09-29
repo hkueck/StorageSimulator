@@ -28,6 +28,7 @@ namespace StorageSimulator.Core.Model
         private void OnMovementRequest(Events.MovementRequest request)
         {
             var movement = request.Request;
+            
             var response = new MovementResponse()
             {
                 Info = movement.Info, Quantity = movement.Quantity, Source = movement.Source, Status = AutomationStatus.InsertionSucceeded,
