@@ -10,6 +10,7 @@ using StorageSimulator.Core.Interfaces;
 using StorageSimulator.Core.Model;
 using StorageSimulator.Core.UseCases;
 using Xunit;
+using MovementRequest = StorageSimulator.Core.Model.MovementRequest;
 
 namespace StorageSimulatorTests.UseCases
 {
@@ -24,7 +25,7 @@ namespace StorageSimulatorTests.UseCases
             var requestFile = $"{_watchpath}1/MovementRequest_V.XML";
             DeleteMovementDirectory($"{_watchpath}1");
             var eventAggregator = new Mock<IEventAggregator>();
-            eventAggregator.Setup(e => e.GetEvent<PubSubEvent<MovementRequest>>()).Returns(requestEvent);
+            eventAggregator.Setup(e => e.GetEvent<PubSubEvent<StorageSimulator.Core.Events.MovementRequest>>()).Returns(requestEvent);
             var config = new Mock<IStorageSimulatorConfig>();
             config.Setup(c => c.CommunicationPath).Returns($"{_watchpath}1");
             var service = new WatchRequestService(eventAggregator.Object, config.Object);
@@ -33,7 +34,7 @@ namespace StorageSimulatorTests.UseCases
             CreateMovementRequest(requestFile);
 
             Task.Delay(25).Wait();
-            eventAggregator.Verify(e => e.GetEvent<PubSubEvent<MovementRequest>>());
+            eventAggregator.Verify(e => e.GetEvent<PubSubEvent<StorageSimulator.Core.Events.MovementRequest>>());
             requestEvent.PublishCalled.Should().BeTrue();
         }
 
@@ -45,7 +46,7 @@ namespace StorageSimulatorTests.UseCases
             var requestFile = $"{_watchpath}/MovementRequest_V.XML";
             DeleteMovementDirectory(_watchpath);
             var eventAggregator = new Mock<IEventAggregator>();
-            eventAggregator.Setup(e => e.GetEvent<PubSubEvent<MovementRequest>>()).Returns(requestEvent);
+            eventAggregator.Setup(e => e.GetEvent<PubSubEvent<StorageSimulator.Core.Events.MovementRequest>>()).Returns(requestEvent);
             var config = new Mock<IStorageSimulatorConfig>();
             config.Setup(c => c.CommunicationPath).Returns(_watchpath);
             var service = new WatchRequestService(eventAggregator.Object, config.Object);
@@ -55,13 +56,13 @@ namespace StorageSimulatorTests.UseCases
             File.Move(tempFile, requestFile);
 
             Task.Delay(25).Wait();
-            eventAggregator.Verify(e => e.GetEvent<PubSubEvent<MovementRequest>>());
+            eventAggregator.Verify(e => e.GetEvent<PubSubEvent<StorageSimulator.Core.Events.MovementRequest>>());
             requestEvent.PublishCalled.Should().BeTrue();
         }
 
-        class EventMock : PubSubEvent<MovementRequest>
+        class EventMock : PubSubEvent<StorageSimulator.Core.Events.MovementRequest>
         {
-            public override void Publish(MovementRequest payload)
+            public override void Publish(StorageSimulator.Core.Events.MovementRequest payload)
             {
                 PublishCalled = true;
             }
@@ -73,8 +74,8 @@ namespace StorageSimulatorTests.UseCases
         {
             XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
             ns.Add("","");
-            var serializer = new XmlSerializer(typeof(Movement));
-            var movement = new Movement();
+            var serializer = new XmlSerializer(typeof(MovementRequest));
+            var movement = new MovementRequest();
             var settings = new XmlWriterSettings();
             settings.Indent = true;
             settings.OmitXmlDeclaration = true;

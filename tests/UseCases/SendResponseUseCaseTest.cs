@@ -20,9 +20,9 @@ namespace StorageSimulatorTests.UseCases
             var responseFile = $"{responsePath}/MovementResponse_V.xml";
             var expectedTicket = Guid.NewGuid();
             var expectedTimestamp = DateTime.UtcNow;
-            var expected = new Movement
+            var expected = new MovementResponse()
             {
-                Info = "info", Quantity = 2, Source = "source", Status = AutomationStatus.InsertionSucceeded, Target = "target", Task = AutomationTasks.Insert,
+                Info = "info", Quantity = 2, Source = "source", Target = "target", Status = AutomationStatus.InsertionSucceeded,
                 Ticket = expectedTicket, Timestamp = expectedTimestamp, SourceCompartment = "2", TargetCompartment = "3"
             };
             PrepareResponseDirectory(responsePath);
@@ -33,16 +33,15 @@ namespace StorageSimulatorTests.UseCases
             useCase.Execute(expected);
 
             File.Exists(responseFile).Should().BeTrue();
-            var xmlSerializer = new XmlSerializer(typeof(Movement));
+            var xmlSerializer = new XmlSerializer(typeof(MovementResponse));
             using var reader = new FileStream(responseFile, FileMode.Open);
-            var response = (Movement) xmlSerializer.Deserialize(reader);
+            var response = (MovementResponse) xmlSerializer.Deserialize(reader);
 
             response.Info.Should().Be("info");
             response.Quantity.Should().Be(2);
             response.Source.Should().Be("source");
-            response.Status.Should().Be(AutomationStatus.InsertionSucceeded);
             response.Target.Should().Be("target");
-            response.Task.Should().Be(AutomationTasks.Insert);
+            response.Status.Should().Be(AutomationStatus.InsertionSucceeded);
             response.Ticket.Should().Be(expectedTicket);
             response.Timestamp.Should().Be(expectedTimestamp);
             response.SourceCompartment.Should().Be("2");

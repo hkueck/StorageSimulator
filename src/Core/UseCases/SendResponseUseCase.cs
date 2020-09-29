@@ -15,7 +15,7 @@ namespace StorageSimulator.Core.UseCases
             _configuration = configuration;
         }
 
-        public void Execute(Movement movement)
+        public void Execute(MovementResponse movementResponse)
         {
             var responseFile = $"{_configuration.CommunicationPath}/MovementResponse_V.xml";
             var tempFile = $"{_configuration.CommunicationPath}/MovementResponse_V.tmp";
@@ -26,7 +26,7 @@ namespace StorageSimulator.Core.UseCases
 
             XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
             ns.Add("","");
-            var serializer = new XmlSerializer(typeof(Movement));
+            var serializer = new XmlSerializer(typeof(MovementResponse));
             var settings = new XmlWriterSettings();
             settings.Indent = true;
             settings.OmitXmlDeclaration = true;
@@ -34,7 +34,7 @@ namespace StorageSimulator.Core.UseCases
             {
                 using (var writer = XmlWriter.Create(stream, settings))
                 {
-                    serializer.Serialize(writer, movement, ns);
+                    serializer.Serialize(writer, movementResponse, ns);
                     writer.Flush();
                     writer.Close();
                 }

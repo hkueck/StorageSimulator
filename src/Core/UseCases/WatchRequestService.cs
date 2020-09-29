@@ -5,6 +5,7 @@ using Prism.Events;
 using StorageSimulator.Core.Events;
 using StorageSimulator.Core.Interfaces;
 using StorageSimulator.Core.Model;
+using MovementRequest = StorageSimulator.Core.Model.MovementRequest;
 
 namespace StorageSimulator.Core.UseCases
 {
@@ -44,11 +45,11 @@ namespace StorageSimulator.Core.UseCases
 
         private void RequestOnCreated(object sender, FileSystemEventArgs e)
         {
-            var xmlSerializer = new XmlSerializer(typeof(Movement));
+            var xmlSerializer = new XmlSerializer(typeof(MovementRequest));
             if (File.Exists(RequestFile))
             {
                 using var reader = new FileStream(RequestFile, FileMode.Open);
-                var request = (Movement) xmlSerializer.Deserialize(reader);
+                var request = (MovementRequest) xmlSerializer.Deserialize(reader);
                 SendRequest(request);
                 try
                 {
@@ -61,10 +62,10 @@ namespace StorageSimulator.Core.UseCases
             }
         }
 
-        private void SendRequest(Movement request)
+        private void SendRequest(MovementRequest request)
         {
-            var movementRequest = new MovementRequest{Request = request};
-            var requestEvent = _eventAggregator.GetEvent<PubSubEvent<MovementRequest>>();
+            var movementRequest = new Events.MovementRequest{Request = request};
+            var requestEvent = _eventAggregator.GetEvent<PubSubEvent<Events.MovementRequest>>();
             requestEvent.Publish(movementRequest);
         }
     }

@@ -4,6 +4,6 @@ namespace StorageSimulator.Core.Interfaces
 {
     public interface ISendResponseUseCase
     {
-        void Execute(Movement movement);
+        void Execute(MovementResponse movementResponse);
     }
 }
