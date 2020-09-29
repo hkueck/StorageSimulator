@@ -15,13 +15,13 @@ namespace StorageSimulator.Core.UseCases
         private readonly IStorageSimulatorConfig _configuration;
         private FileSystemWatcher _watcher;
 
-        private string RequestFile => Path.Combine(_configuration.WatchPath, MovementRequestFile);
+        private string RequestFile => Path.Combine(_configuration.CommunicationPath, MovementRequestFile);
 
         public WatchRequestService(IEventAggregator eventAggregator, IStorageSimulatorConfig configuration)
         {
             _eventAggregator = eventAggregator;
             _configuration = configuration;
-            CreateWatchPath(configuration.WatchPath);
+            CreateWatchPath(configuration.CommunicationPath);
         }
 
         private void CreateWatchPath(string watchPath)
@@ -34,7 +34,7 @@ namespace StorageSimulator.Core.UseCases
 
         public void Run()
         {
-            _watcher = new FileSystemWatcher(_configuration.WatchPath);
+            _watcher = new FileSystemWatcher(_configuration.CommunicationPath);
             _watcher.Filter = "*";
             _watcher.Created += RequestOnCreated;
             _watcher.Renamed += RequestOnCreated;

@@ -26,7 +26,7 @@ namespace StorageSimulatorTests.UseCases
             var eventAggregator = new Mock<IEventAggregator>();
             eventAggregator.Setup(e => e.GetEvent<PubSubEvent<MovementRequest>>()).Returns(requestEvent);
             var config = new Mock<IStorageSimulatorConfig>();
-            config.Setup(c => c.WatchPath).Returns($"{_watchpath}1");
+            config.Setup(c => c.CommunicationPath).Returns($"{_watchpath}1");
             var service = new WatchRequestService(eventAggregator.Object, config.Object);
             
             service.Run();
@@ -47,7 +47,7 @@ namespace StorageSimulatorTests.UseCases
             var eventAggregator = new Mock<IEventAggregator>();
             eventAggregator.Setup(e => e.GetEvent<PubSubEvent<MovementRequest>>()).Returns(requestEvent);
             var config = new Mock<IStorageSimulatorConfig>();
-            config.Setup(c => c.WatchPath).Returns(_watchpath);
+            config.Setup(c => c.CommunicationPath).Returns(_watchpath);
             var service = new WatchRequestService(eventAggregator.Object, config.Object);
             
             service.Run();

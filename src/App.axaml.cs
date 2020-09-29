@@ -26,6 +26,7 @@ namespace StorageSimulator
         {
             containerRegistry.Register<IWatchRequestUseCase, WatchRequestUseCase>();
             containerRegistry.Register<IWatchRequestService, WatchRequestService>();
+            containerRegistry.Register<ISendResponseUseCase, SendResponseUseCase>();
             containerRegistry.Register<IStorageSystem, StorageSystem>();
             containerRegistry.Register<IStorageSimulatorConfig, StorageSimulatorConfig>();
         }

@@ -4,6 +4,6 @@ namespace StorageSimulator.Core.Model
 {
     public class StorageSimulatorConfig: IStorageSimulatorConfig
     {
-        public string WatchPath { get; set; } = "./WatchPath";
+        public string CommunicationPath { get; set; } = "./CommunicationPath";
     }
 }
