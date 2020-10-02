@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Generic;
 using Prism.Events;
 using StorageSimulator.Core.Interfaces;
-using StorageSimulator.Core.Types;
 
 namespace StorageSimulator.Core.Model
 {
@@ -31,13 +29,38 @@ namespace StorageSimulator.Core.Model
         private void OnMovementRequest(Events.MovementRequestEvent movementRequestEvent)
         {
             var movement = movementRequestEvent.Request;
-            var response = _analyseRequestUseCase.Analyse(movement);
+            var response = _analyseRequestUseCase.Execute(movement);
             _sendUseCase.Execute(response);
         }
 
         public void AddStoragePoint(StoragePoint storagePoint)
         {
             StoragePoints.Add(storagePoint);
+        }
+
+        public void AddStore(Store store)
+        {
+            Stores.Add(store);
+        }
+
+        public void AddPartToShelf(Shelf shelf, Part part)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void AddShelfToStore(Store store, Shelf shelf)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void RemovePartFromShelf(Shelf shelf, Part part)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void AddPartToStoragePoint(StoragePoint storagePoint, Part part)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

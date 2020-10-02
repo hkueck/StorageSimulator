@@ -5,6 +5,7 @@ using Prism.Ioc;
 using StorageSimulator.Core.Interfaces;
 using StorageSimulator.Core.Model;
 using StorageSimulator.Core.UseCases;
+using StorageSimulator.Infrastructure;
 using StorageSimulator.Views;
 
 namespace StorageSimulator

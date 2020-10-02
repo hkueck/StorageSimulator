@@ -2,12 +2,10 @@ using System;
 using System.IO;
 using System.Xml.Serialization;
 using Prism.Events;
-using StorageSimulator.Core.Events;
 using StorageSimulator.Core.Interfaces;
-using StorageSimulator.Core.Model;
 using MovementRequest = StorageSimulator.Core.Model.MovementRequest;
 
-namespace StorageSimulator.Core.UseCases
+namespace StorageSimulator.Infrastructure
 {
     public class WatchRequestService: IWatchRequestService
     {
@@ -64,8 +62,8 @@ namespace StorageSimulator.Core.UseCases
 
         private void SendRequest(MovementRequest request)
         {
-            var movementRequest = new Events.MovementRequestEvent{Request = request};
-            var requestEvent = _eventAggregator.GetEvent<PubSubEvent<Events.MovementRequestEvent>>();
+            var movementRequest = new Core.Events.MovementRequestEvent{Request = request};
+            var requestEvent = _eventAggregator.GetEvent<PubSubEvent<Core.Events.MovementRequestEvent>>();
             requestEvent.Publish(movementRequest);
         }
     }

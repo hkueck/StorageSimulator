@@ -28,7 +28,7 @@ namespace StorageSimulatorTests.Model
             
             _storageSystem = new StorageSystem(_watchUseCase.Object, _sendUseCase.Object, _requestAnalyser.Object, _eventAggregator);
 
-            _requestAnalyser.Setup(a => a.Analyse(It.IsAny<MovementRequest>())).Returns(new MovementResponse());
+            _requestAnalyser.Setup(a => a.Execute(It.IsAny<MovementRequest>())).Returns(new MovementResponse());
         }
         
         [Fact]
@@ -61,15 +61,16 @@ namespace StorageSimulatorTests.Model
         {
             var request = new MovementRequest
             {
-                Ticket = Guid.NewGuid(), Data = new MovementData {Barcode = "12345"}, Info = "part in new storage point", Quantity = 1, Target = "TV01",
+                Ticket = Guid.NewGuid(), Info = "part in new storage point", Quantity = 1, Target = "TV01",
                 TargetCompartment = "1"
             };
+            request.Data.Add(new MovementData {Barcode = "12345"});
             var movementRequest = new MovementRequestEvent{Request = request};
             var requestEvent = _eventAggregator.GetEvent<PubSubEvent<MovementRequestEvent>>();
             
             requestEvent.Publish(movementRequest);
 
-            _requestAnalyser.Verify(a => a.Analyse(request));
+            _requestAnalyser.Verify(a => a.Execute(request));
         }
 
         [Fact]
@@ -83,6 +84,5 @@ namespace StorageSimulatorTests.Model
             var storagePoint = _storageSystem.StoragePoints.First();
             storagePoint.Should().Be(expected);
         }
-
     }
 }

@@ -5,6 +5,6 @@ namespace StorageSimulator.Core.Model
     public class Store
     {
         public string Name { get; set; }
-        public IList<Shelf> Shelves { get; set; }
+        public IList<Shelf> Shelves { get; } = new List<Shelf>();
     }
 }

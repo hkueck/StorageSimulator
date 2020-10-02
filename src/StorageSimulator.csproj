@@ -12,8 +12,16 @@
       <PackageReference Include="Avalonia" Version="0.9.12" />
       <PackageReference Include="Avalonia.Desktop" Version="0.9.12" />
       <PackageReference Include="Avalonia.ReactiveUI" Version="0.9.12" />
+      <PackageReference Include="Dock.Avalonia.Themes.Default" Version="0.9.12" />
+      <PackageReference Include="Dock.Avalonia.Themes.Metro" Version="0.9.12" />
       <PackageReference Include="Prism.Avalonia" Version="7.2.0.1428" />
       <PackageReference Include="Prism.DryIoc.Avalonia" Version="7.2.0.1428" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Views\MovementRequestView.axaml.cs">
+        <DependentUpon>MovementRequestView.axaml</DependentUpon>
+      </Compile>
     </ItemGroup>
 
 </Project>

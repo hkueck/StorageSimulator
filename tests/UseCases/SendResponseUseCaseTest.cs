@@ -20,11 +20,13 @@ namespace StorageSimulatorTests.UseCases
             var responseFile = $"{responsePath}/MovementResponse_V.xml";
             var expectedTicket = Guid.NewGuid();
             var expectedTimestamp = DateTime.UtcNow;
+            PrepareResponseDirectory(responsePath);
             var expected = new MovementResponse()
             {
                 Info = "info", Quantity = 2, Source = "source", Target = "target", Status = AutomationStatus.InsertionSucceeded,
-                Ticket = expectedTicket, Timestamp = expectedTimestamp, SourceCompartment = "2", TargetCompartment = "3"
+                Ticket = expectedTicket, Timestamp = expectedTimestamp, SourceCompartment = "2", TargetCompartment = "3",
             };
+            expected.Data.Add(new MovementData{Barcode = "barcode", Index = "2"});
             PrepareResponseDirectory(responsePath);
             var config = new Mock<IStorageSimulatorConfig>();
             config.Setup(c => c.CommunicationPath).Returns(responsePath);
@@ -57,6 +59,7 @@ namespace StorageSimulatorTests.UseCases
                 {
                     File.Delete(file);
                 }
+                Directory.Delete(responsePath);
             }
             else
             {

@@ -4,7 +4,7 @@ namespace StorageSimulator.Core.Interfaces
 {
     public interface IAnalyseRequestUseCase
     {
-        MovementResponse Analyse(MovementRequest request);
+        MovementResponse Execute(MovementRequest request);
         IStorageSystem StorageSystem { get; set; }
     }
 }

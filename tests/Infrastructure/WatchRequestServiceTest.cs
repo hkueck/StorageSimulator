@@ -5,14 +5,13 @@ using System.Xml.Serialization;
 using FluentAssertions;
 using Moq;
 using Prism.Events;
-using StorageSimulator.Core.Events;
 using StorageSimulator.Core.Interfaces;
 using StorageSimulator.Core.Model;
-using StorageSimulator.Core.UseCases;
+using StorageSimulator.Infrastructure;
 using Xunit;
 using MovementRequest = StorageSimulator.Core.Model.MovementRequest;
 
-namespace StorageSimulatorTests.UseCases
+namespace StorageSimulatorTests.Infrastructure
 {
     public class WatchRequestServiceTest
     {
@@ -75,7 +74,8 @@ namespace StorageSimulatorTests.UseCases
             XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
             ns.Add("","");
             var serializer = new XmlSerializer(typeof(MovementRequest));
-            var movement = new MovementRequest{Data = new MovementData{Barcode = "12345"}};
+            var movement = new MovementRequest();
+            movement.Data.Add(new MovementData{Barcode = "12345"});
             var settings = new XmlWriterSettings();
             settings.Indent = true;
             settings.OmitXmlDeclaration = true;

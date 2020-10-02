@@ -5,7 +5,7 @@ namespace StorageSimulator.Core.Types
     public enum AutomationStatus
     {
         [XmlEnum(Name = "1")]
-        TransportOrder = 1,
+        TransportSucceeded = 1,
         [XmlEnum(Name = "2")]
         InsertionSucceeded = 2,
         [XmlEnum(Name = "3")]
