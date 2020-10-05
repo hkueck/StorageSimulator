@@ -20,7 +20,6 @@ namespace StorageSimulatorTests.UseCases
             var responseFile = $"{responsePath}/MovementResponse_V.xml";
             var expectedTicket = Guid.NewGuid();
             var expectedTimestamp = DateTime.UtcNow;
-            PrepareResponseDirectory(responsePath);
             var expected = new MovementResponse()
             {
                 Info = "info", Quantity = 2, Source = "source", Target = "target", Status = AutomationStatus.InsertionSucceeded,
@@ -50,6 +49,35 @@ namespace StorageSimulatorTests.UseCases
             response.TargetCompartment.Should().Be("3");
         }
 
+        [Fact]
+        public void IfResponseExistsExecuteShouldThrowIOException()
+        {
+            var responsePath = $"./responsePath";
+            var responseFile = $"{responsePath}/MovementResponse_V.xml";
+            var expectedTicket = Guid.NewGuid();
+            var expectedTimestamp = DateTime.UtcNow;
+            var expected = new MovementResponse()
+            {
+                Info = "info", Quantity = 2, Source = "source", Target = "target", Status = AutomationStatus.InsertionSucceeded,
+                Ticket = expectedTicket, Timestamp = expectedTimestamp, SourceCompartment = "2", TargetCompartment = "3",
+            };
+            expected.Data.Add(new MovementData{Barcode = "barcode", Index = "2"});
+            PrepareResponseDirectory(responsePath);
+            Directory.CreateDirectory(responsePath);
+            using (var stream = File.Create(responseFile))
+            {
+                stream.Flush();
+                stream.Close();
+            }
+            var config = new Mock<IStorageSimulatorConfig>();
+            config.Setup(c => c.CommunicationPath).Returns(responsePath);
+            ISendResponseUseCase useCase = new SendResponseUseCase(config.Object);
+            
+            var exception = Assert.Throws<IOException>(() => useCase.Execute(expected));
+
+            exception.Should().NotBeNull();
+        }
+
         private static void PrepareResponseDirectory(string responsePath)
         {
             if (Directory.Exists(responsePath))
@@ -60,10 +88,6 @@ namespace StorageSimulatorTests.UseCases
                     File.Delete(file);
                 }
                 Directory.Delete(responsePath);
-            }
-            else
-            {
-                Directory.CreateDirectory(responsePath);
             }
         }
     }

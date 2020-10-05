@@ -15,7 +15,7 @@ namespace StorageSimulatorTests.ViewModels
         public void ReceivingRequestMessageShouldAddRequest()
         {
             var eventAggregator = new EventAggregator();
-            var viewModel = new MovementRequestListViewModel(eventAggregator);
+            var viewModel = new MovementRequestListViewModel(eventAggregator, false);
             var requestEvent = eventAggregator.GetEvent<PubSubEvent<MovementRequestEvent>>();
             var request = new MovementRequest { Ticket = Guid.NewGuid()};
             var movementRequestEvent = new MovementRequestEvent{MovementRequest = request};

@@ -23,12 +23,7 @@ namespace StorageSimulator.Core.UseCases
                     case AutomationTasks.Insert:
                         response = AnalyseStoragePoint(request);
                         break;
-                    case AutomationTasks.Delete:
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
                 }
-                
             }
             return response;
         }

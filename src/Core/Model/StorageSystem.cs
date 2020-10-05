@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
 using Prism.Events;
 using StorageSimulator.Core.Interfaces;
 
@@ -30,7 +32,15 @@ namespace StorageSimulator.Core.Model
         {
             var movement = movementRequestEvent.MovementRequest;
             var response = _analyseRequestUseCase.Execute(movement);
-            _sendUseCase.Execute(response);
+            try
+            {
+                _sendUseCase.Execute(response);
+            }
+            catch (IOException exception)
+            {
+                //todo Fehlerbehandlung
+                Console.WriteLine(exception);
+            }
         }
 
         public void AddStoragePoint(StoragePoint storagePoint)

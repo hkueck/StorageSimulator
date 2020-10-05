@@ -10,10 +10,17 @@ namespace StorageSimulator.ViewModels
     {
         public ObservableCollection<IMovementRequestViewModel> Requests { get; } = new ObservableCollection<IMovementRequestViewModel>();
 
-        public MovementRequestListViewModel(IEventAggregator eventAggregator)
+        public MovementRequestListViewModel(IEventAggregator eventAggregator, bool uiThread = true)
         {
             var requestEvent = eventAggregator.GetEvent<PubSubEvent<MovementRequestEvent>>();
-            requestEvent.Subscribe(OnReceiveRequest);
+            if (uiThread)    
+            {
+                requestEvent.Subscribe(OnReceiveRequest, ThreadOption.UIThread);
+            }
+            else // for test only
+            {
+                requestEvent.Subscribe(OnReceiveRequest);
+            }
         }
 
         private void OnReceiveRequest(MovementRequestEvent request)

@@ -8,9 +8,7 @@
 	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/AutoDetectedNamingRules/=Property/@EntryIndexedValue">&lt;Policy Inspect="True" Prefix="" Suffix="" Style="AaBb" /&gt;</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/AutoDetectedNamingRules/=TypesAndNamespaces/@EntryIndexedValue">&lt;Policy Inspect="True" Prefix="" Suffix="" Style="AaBb" /&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=3f4f9f30_002Dd96c_002D46a4_002D834f_002D004a62a46aa7/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="AnalyseMovementWithoutBarcodesToStoreShouldAddPartsToStore" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
-  &lt;TestAncestor&gt;
-    &lt;TestId&gt;xUnit::D9CBEC03-4048-4B7E-83C0-F38C09C2CD81::.NETCoreApp,Version=v3.1::StorageSimulatorTests.UseCases.AnalyseRequestUseCaseTest.AnalyseMovementWithoutBarcodesToStoreShouldAddPartsToStore&lt;/TestId&gt;
-  &lt;/TestAncestor&gt;
+  &lt;Solution /&gt;
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=c95ca824_002Dc2bc_002D4115_002D988d_002D4b2aac3f371c/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="AnalyseMovementWithoutBarcodesToStoreShouldAddPartsToStore #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;Solution /&gt;
