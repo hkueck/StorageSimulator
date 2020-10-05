@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
 using Prism.Mvvm;
+using StorageSimulator.Core.Interfaces;
 using StorageSimulator.Core.Model;
 using StorageSimulator.Core.Types;
 
 namespace StorageSimulator.ViewModels
 {
-    public class MovementRequestViewModel: BindableBase
+    public class MovementRequestViewModel: BindableBase, IMovementRequestViewModel
     {
         public string Name { get; set; }
 

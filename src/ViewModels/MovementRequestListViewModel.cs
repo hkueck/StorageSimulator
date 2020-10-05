@@ -1,18 +1,25 @@
 using System.Collections.ObjectModel;
+using Prism.Events;
 using Prism.Mvvm;
-using StorageSimulator.Core.Model;
+using StorageSimulator.Core.Events;
+using StorageSimulator.Core.Interfaces;
 
 namespace StorageSimulator.ViewModels
 {
-    public class MovementRequestListViewModel: BindableBase
+    public class MovementRequestListViewModel: BindableBase, IMovementRequestListViewModel
     {
-        public ObservableCollection<MovementRequestViewModel> Requests { get; } = new ObservableCollection<MovementRequestViewModel>();
+        public ObservableCollection<IMovementRequestViewModel> Requests { get; } = new ObservableCollection<IMovementRequestViewModel>();
 
-        public MovementRequestListViewModel()
+        public MovementRequestListViewModel(IEventAggregator eventAggregator)
         {
-            var request = new MovementRequest{Info = "Transport von Teilen"};
-            Requests.Add(new MovementRequestViewModel(request));
+            var requestEvent = eventAggregator.GetEvent<PubSubEvent<MovementRequestEvent>>();
+            requestEvent.Subscribe(OnReceiveRequest);
         }
-        
+
+        private void OnReceiveRequest(MovementRequestEvent request)
+        {
+            var viewModel = new MovementRequestViewModel(request.MovementRequest);
+            Requests.Add(viewModel);
+        }
     }
 }

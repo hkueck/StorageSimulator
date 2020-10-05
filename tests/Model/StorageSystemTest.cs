@@ -49,7 +49,7 @@ namespace StorageSimulatorTests.Model
                 Info = "info", Quantity = 2, Source = "source", Target = "target", Task = AutomationTasks.Insert,
                 Ticket = Guid.NewGuid(), Timestamp = DateTime.UtcNow, SourceCompartment = "4", TargetCompartment = "2"
             };
-            var movementRequest = new MovementRequestEvent{Request = movement};
+            var movementRequest = new MovementRequestEvent{MovementRequest = movement};
             
             requestEvent.Publish(movementRequest);
 
@@ -65,7 +65,7 @@ namespace StorageSimulatorTests.Model
                 TargetCompartment = "1"
             };
             request.Data.Add(new MovementData {Barcode = "12345"});
-            var movementRequest = new MovementRequestEvent{Request = request};
+            var movementRequest = new MovementRequestEvent{MovementRequest = request};
             var requestEvent = _eventAggregator.GetEvent<PubSubEvent<MovementRequestEvent>>();
             
             requestEvent.Publish(movementRequest);

@@ -62,7 +62,7 @@ namespace StorageSimulator.Infrastructure
 
         private void SendRequest(MovementRequest request)
         {
-            var movementRequest = new Core.Events.MovementRequestEvent{Request = request};
+            var movementRequest = new Core.Events.MovementRequestEvent{MovementRequest = request};
             var requestEvent = _eventAggregator.GetEvent<PubSubEvent<Core.Events.MovementRequestEvent>>();
             requestEvent.Publish(movementRequest);
         }

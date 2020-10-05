@@ -4,6 +4,6 @@ namespace StorageSimulator.Core.Events
 {
     public class MovementRequestEvent
     {
-        public Model.MovementRequest Request { get; set; }
+        public MovementRequest MovementRequest { get; set; }
     }
 }

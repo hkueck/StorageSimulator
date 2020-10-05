@@ -6,6 +6,7 @@ using StorageSimulator.Core.Interfaces;
 using StorageSimulator.Core.Model;
 using StorageSimulator.Core.UseCases;
 using StorageSimulator.Infrastructure;
+using StorageSimulator.ViewModels;
 using StorageSimulator.Views;
 
 namespace StorageSimulator
@@ -31,6 +32,8 @@ namespace StorageSimulator
             containerRegistry.Register<IAnalyseRequestUseCase, AnalyseRequestUseCase>();
             containerRegistry.Register<IStorageSystem, StorageSystem>();
             containerRegistry.Register<IStorageSimulatorConfig, StorageSimulatorConfig>();
+            containerRegistry.Register<IMovementRequestListViewModel, MovementRequestListViewModel>();
+            containerRegistry.Register<IMovementRequestViewModel, MovementRequestViewModel>();
         }
 
         protected override IAvaloniaObject CreateShell()

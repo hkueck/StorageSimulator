@@ -28,7 +28,7 @@ namespace StorageSimulator.Core.Model
 
         private void OnMovementRequest(Events.MovementRequestEvent movementRequestEvent)
         {
-            var movement = movementRequestEvent.Request;
+            var movement = movementRequestEvent.MovementRequest;
             var response = _analyseRequestUseCase.Execute(movement);
             _sendUseCase.Execute(response);
         }
