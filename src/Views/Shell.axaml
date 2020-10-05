@@ -15,5 +15,6 @@
         <vm:ShellViewModel/>
     </Design.DataContext>
     <Grid>
+        <views:MovementRequestListView/>
     </Grid>
 </Window>

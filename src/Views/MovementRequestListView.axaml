@@ -1,0 +1,28 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:prism="http://prismlibrary.com/"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             x:Class="StorageSimulator.Views.MovementRequestListView">
+    <Grid RowDefinitions="Auto,*">
+        <TextBlock Text="Requests"
+                   Grid.Row="0"
+                   Margin="10,10,10,10"/>
+        <ListBox x:Name="Request" 
+                 Grid.Row="1"
+                 Items="{Binding Requests}">
+           <ListBox.ItemTemplate>
+               <DataTemplate>
+                    <Border Background="Blue"
+                            CornerRadius="4" 
+                            Padding="4">
+                        <TextBlock Text="{Binding Name}"
+                                   Foreground="Yellow"/>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>           
+</UserControl>

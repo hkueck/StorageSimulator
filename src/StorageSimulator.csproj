@@ -19,7 +19,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Update="Views\MovementRequestView.axaml.cs">
+      <Compile Update="Views\MovementRequestListListView.axaml.cs">
         <DependentUpon>MovementRequestView.axaml</DependentUpon>
       </Compile>
     </ItemGroup>
