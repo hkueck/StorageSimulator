@@ -14,7 +14,8 @@
     <Design.DataContext>
         <vm:ShellViewModel/>
     </Design.DataContext>
-    <Grid>
-        <views:MovementRequestListView/>
+    <Grid RowDefinitions="*,*">
+        <views:MovementRequestListView Grid.Row="0"/>
+        <views:LogListView Grid.Row="1"/>
     </Grid>
 </Window>

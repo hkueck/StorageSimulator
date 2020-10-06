@@ -34,6 +34,8 @@ namespace StorageSimulator
             containerRegistry.Register<IStorageSimulatorConfig, StorageSimulatorConfig>();
             containerRegistry.Register<IMovementRequestListViewModel, MovementRequestListViewModel>();
             containerRegistry.Register<IMovementRequestViewModel, MovementRequestViewModel>();
+            containerRegistry.Register<ILogViewModel, LogViewModel>();
+            containerRegistry.Register<ILogListViewModel, LogListViewModel>();
         }
 
         protected override IAvaloniaObject CreateShell()

@@ -1,0 +1,41 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:prism="http://prismlibrary.com/"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             x:Class="StorageSimulator.Views.LogListView">
+    <Grid RowDefinitions="Auto,*">
+        <TextBlock Text="Logs"
+                   FontSize="18"
+                   Grid.Row="0"
+                   Grid.ColumnSpan="3"
+                   Margin="10,10,10,10"/>
+        <ListBox Grid.Row="1" 
+                 Items="{Binding Logs}">
+           <ListBox.ItemTemplate>
+               <DataTemplate>
+                   <Border Background="Blue">
+                       <Grid ColumnDefinitions="80, 780">
+                           <TextBlock Text="{Binding Type}"
+                                      Grid.Column="0"
+                                      Margin="10,2,10,2"
+                                      Foreground="Yellow"/>
+                           <Border Grid.Column="1">
+                               <ToolTip.Tip>
+                                    <TextBlock Classes="h1"
+                                               FontSize="16" 
+                                               Text="{Binding Message}" />
+                               </ToolTip.Tip>
+                               <TextBlock Text="{Binding Message}"
+                                          Margin="10,2,10,2"
+                                          Foreground="Yellow"/>
+                           </Border>
+                       </Grid>
+                   </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>           
+</UserControl>

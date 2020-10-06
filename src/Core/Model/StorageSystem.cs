@@ -1,7 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using Prism.Events;
+using StorageSimulator.Core.Events;
 using StorageSimulator.Core.Interfaces;
 
 namespace StorageSimulator.Core.Model
@@ -20,7 +20,7 @@ namespace StorageSimulator.Core.Model
             IEventAggregator eventAggregator)
         {
             _eventAggregator = eventAggregator;
-            var requestEvent = _eventAggregator.GetEvent<PubSubEvent<Events.MovementRequestEvent>>();
+            var requestEvent = _eventAggregator.GetEvent<PubSubEvent<MovementRequestEvent>>();
             requestEvent.Subscribe(OnMovementRequest);
             _watchRequestUseCase = watchRequestUseCase;
             _sendUseCase = sendUseCase;
@@ -28,7 +28,7 @@ namespace StorageSimulator.Core.Model
             _watchRequestUseCase.Execute();
         }
 
-        private void OnMovementRequest(Events.MovementRequestEvent movementRequestEvent)
+        private void OnMovementRequest(MovementRequestEvent movementRequestEvent)
         {
             var movement = movementRequestEvent.MovementRequest;
             var response = _analyseRequestUseCase.Execute(movement);
@@ -38,8 +38,8 @@ namespace StorageSimulator.Core.Model
             }
             catch (IOException exception)
             {
-                //todo Fehlerbehandlung
-                Console.WriteLine(exception);
+                var exceptionEvent = _eventAggregator.GetEvent<PubSubEvent<ExceptionEvent>>();
+                exceptionEvent.Publish(new ExceptionEvent{Exception = exception});
             }
         }
 

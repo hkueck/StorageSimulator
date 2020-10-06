@@ -3,10 +3,9 @@ using Avalonia.Markup.Xaml;
 
 namespace StorageSimulator.Views
 {
-    public class MovementRequestListView: UserControl
+    public class LogListView: UserControl
     {
-
-        public MovementRequestListView()
+        public LogListView()
         {
             InitializeComponent();
         }

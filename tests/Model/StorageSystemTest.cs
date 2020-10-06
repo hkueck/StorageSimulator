@@ -1,5 +1,7 @@
 using System;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using Prism.Events;
@@ -83,6 +85,30 @@ namespace StorageSimulatorTests.Model
             _storageSystem.StoragePoints.Count.Should().Be(1);
             var storagePoint = _storageSystem.StoragePoints.First();
             storagePoint.Should().Be(expected);
+        }
+
+        [Fact]
+        public void OnMovementRequestCantWriteResponseShouldSendExceptionMessage()
+        {
+            ExceptionEvent receivedExceptionEvent = null;
+            _sendUseCase.Setup(u => u.Execute(It.IsAny<MovementResponse>())).Throws<IOException>();
+            _requestAnalyser.Setup(a => a.Execute(It.IsAny<MovementRequest>())).Returns(new MovementResponse());
+            var exceptionEvent = _eventAggregator.GetEvent<PubSubEvent<ExceptionEvent>>();
+            exceptionEvent.Subscribe(event1 => receivedExceptionEvent = event1);
+            var request = new MovementRequest
+            {
+                Ticket = Guid.NewGuid(), Info = "part in new storage point", Quantity = 1, Target = "TV01",
+                TargetCompartment = "1"
+            };
+            request.Data.Add(new MovementData {Barcode = "12345"});
+            var movementRequest = new MovementRequestEvent{MovementRequest = request};
+            var requestEvent = _eventAggregator.GetEvent<PubSubEvent<MovementRequestEvent>>();
+            
+            requestEvent.Publish(movementRequest);
+
+            Task.Delay(25).Wait();
+            receivedExceptionEvent.Should().NotBeNull();
+            receivedExceptionEvent.Exception.Should().BeOfType(typeof(IOException));
         }
     }
 }
