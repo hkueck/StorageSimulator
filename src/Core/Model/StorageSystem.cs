@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Prism.Events;
 using StorageSimulator.Core.Events;
 using StorageSimulator.Core.Interfaces;
@@ -13,8 +14,8 @@ namespace StorageSimulator.Core.Model
         private readonly IAnalyseRequestUseCase _analyseRequestUseCase;
         private readonly IEventAggregator _eventAggregator;
 
-        public IList<Store> Stores { get; set; }
-        public IList<StoragePoint> StoragePoints { get; set; } = new List<StoragePoint>();
+        public IList<Store> Stores { get; } = new List<Store>();
+        public IList<StoragePoint> StoragePoints { get; } = new List<StoragePoint>();
         
         public StorageSystem(IWatchRequestUseCase watchRequestUseCase, ISendResponseUseCase sendUseCase, IAnalyseRequestUseCase analyseRequestUseCase,
             IEventAggregator eventAggregator)
@@ -25,6 +26,7 @@ namespace StorageSimulator.Core.Model
             _watchRequestUseCase = watchRequestUseCase;
             _sendUseCase = sendUseCase;
             _analyseRequestUseCase = analyseRequestUseCase;
+            _analyseRequestUseCase.StorageSystem = this;
             _watchRequestUseCase.Execute();
         }
 
@@ -35,6 +37,8 @@ namespace StorageSimulator.Core.Model
             try
             {
                 _sendUseCase.Execute(response);
+                var responseEvent = _eventAggregator.GetEvent<PubSubEvent<MovementResponseEvent>>();
+                responseEvent.Publish(new MovementResponseEvent{Response = response});
             }
             catch (IOException exception)
             {
@@ -55,22 +59,22 @@ namespace StorageSimulator.Core.Model
 
         public void AddPartToShelf(Shelf shelf, Part part)
         {
-            throw new System.NotImplementedException();
+            shelf.Parts.Add(part);
         }
 
         public void AddShelfToStore(Store store, Shelf shelf)
         {
-            throw new System.NotImplementedException();
+            store.Shelves.Add(shelf);
         }
 
         public void RemovePartFromShelf(Shelf shelf, Part part)
         {
-            throw new System.NotImplementedException();
+            shelf.Parts.Remove(part);
         }
 
         public void AddPartToStoragePoint(StoragePoint storagePoint, Part part)
         {
-            throw new System.NotImplementedException();
+            storagePoint.Parts.Add(part);
         }
     }
 }

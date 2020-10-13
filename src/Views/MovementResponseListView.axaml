@@ -1,0 +1,55 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:prism="http://prismlibrary.com/"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             x:Class="StorageSimulator.Views.MovementResponseListView">
+    <Grid RowDefinitions="Auto,*">
+        <TextBlock Text="Responses"
+                   FontSize="18"
+                   Grid.Row="0"
+                   Grid.ColumnSpan="3"
+                   Margin="10,10,10,10"/>
+        <ListBox Grid.Row="1" 
+                 Items="{Binding Responses}">
+           <ListBox.ItemTemplate>
+               <DataTemplate>
+                   <Border Background="Blue">
+                       <Grid ColumnDefinitions="80, 80, 150, 80, 80, 80">
+                           <TextBlock Text="{Binding Name}"
+                                      Grid.Column="0"
+                                      Margin="10,2,10,2"
+                                      Foreground="Yellow"/>
+                           <TextBlock Text="{Binding Status}"
+                                      Grid.Column="1"
+                                      Margin="10,2,10,2"
+                                      Foreground="Yellow"/>
+                           <TextBlock Text="{Binding Timestamp}"
+                                      Grid.Column="2"
+                                      Margin="10,2,10,2"
+                                      Foreground="Yellow"/>
+                           <TextBlock Text="{Binding Source}"
+                                      Grid.Column="3"
+                                      Margin="10,2,10,2"
+                                      Foreground="Yellow"/>
+                           <TextBlock Text="{Binding SorceShelf}"
+                                      Grid.Column="4"
+                                      Margin="10,2,10,2"
+                                      Foreground="Yellow"/>
+                           <TextBlock Text="{Binding Target}"
+                                      Grid.Column="5"
+                                      Margin="10,2,10,2"
+                                      Foreground="Yellow"/>
+                           <TextBlock Text="{Binding TargetShelf}"
+                                      Grid.Column="6"
+                                      Margin="10,2,10,2"
+                                      Foreground="Yellow"/>
+                       </Grid>
+                   </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>           
+</UserControl>

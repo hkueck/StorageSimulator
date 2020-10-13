@@ -6,6 +6,7 @@ namespace StorageSimulator.Core.Model
     [XmlType(TypeName = "dataentry")]
     public class MovementRequest : MovementBase
     {
+        [XmlElement("TASK")]
         public AutomationTasks Task { get; set; } = AutomationTasks.Transport;
     }
 }

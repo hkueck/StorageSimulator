@@ -59,6 +59,27 @@ namespace StorageSimulatorTests.Model
         }
 
         [Fact]
+        public void ReceivingRequestShouldSendResponseEvent()
+        {
+            MovementResponseEvent receivedEvent = null;
+            _sendUseCase.Setup(u => u.Execute(It.IsAny<MovementResponse>())).Callback<MovementResponse>(response => { });
+            var requestEvent = _eventAggregator.GetEvent<PubSubEvent<MovementRequestEvent>>();
+            var responseEvent = _eventAggregator.GetEvent<PubSubEvent<MovementResponseEvent>>();
+            responseEvent.Subscribe(event1 => receivedEvent = event1);
+            var movement = new MovementRequest
+            {
+                Info = "info", Quantity = 2, Source = "source", Target = "target", Task = AutomationTasks.Insert,
+                Ticket = Guid.NewGuid(), Timestamp = DateTime.UtcNow, SourceCompartment = "4", TargetCompartment = "2"
+            };
+            var movementRequest = new MovementRequestEvent{MovementRequest = movement};
+            
+            requestEvent.Publish(movementRequest);
+
+            Task.Delay(25).Wait();
+            receivedEvent.Should().NotBeNull();
+        }
+
+        [Fact]
         public void ReceivingRequestShouldCallRequestAnalyser()
         {
             var request = new MovementRequest

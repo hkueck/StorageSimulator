@@ -44,7 +44,7 @@ namespace StorageSimulatorTests.UseCases
             response.Target.Should().Be("target");
             response.Status.Should().Be(AutomationStatus.InsertionSucceeded);
             response.Ticket.Should().Be(expectedTicket);
-            response.Timestamp.Should().Be(expectedTimestamp);
+            response.TimestampString.Should().Be(expectedTimestamp.ToString("dd.MM.yyyy hh:mm:ss"));
             response.SourceCompartment.Should().Be("2");
             response.TargetCompartment.Should().Be("3");
         }
