@@ -15,7 +15,7 @@ namespace StorageSimulatorTests.ViewModels
             var eventAggregator = new EventAggregator();
             var response = new MovementResponse();
             var responseEvent = eventAggregator.GetEvent<PubSubEvent<MovementResponseEvent>>();
-            var viewModel = new MovementResponseListViewModel(eventAggregator, true);
+            var viewModel = new MovementResponseListViewModel(eventAggregator);
             
             responseEvent.Publish(new MovementResponseEvent{Response = response});
 

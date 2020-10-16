@@ -7,7 +7,7 @@ using MovementRequest = StorageSimulator.Core.Model.MovementRequest;
 
 namespace StorageSimulator.Infrastructure
 {
-    public class WatchRequestService: IWatchRequestService
+    public class WatchRequestService : IWatchRequestService
     {
         private const string MovementRequestFile = "MovementRequest_V.XML";
         private readonly IEventAggregator _eventAggregator;
@@ -62,7 +62,7 @@ namespace StorageSimulator.Infrastructure
 
         private void SendRequest(MovementRequest request)
         {
-            var movementRequest = new Core.Events.MovementRequestEvent{MovementRequest = request};
+            var movementRequest = new Core.Events.MovementRequestEvent {MovementRequest = request};
             var requestEvent = _eventAggregator.GetEvent<PubSubEvent<Core.Events.MovementRequestEvent>>();
             requestEvent.Publish(movementRequest);
         }

@@ -1,0 +1,26 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:views="clr-namespace:StorageSimulator.Views;assembly=StorageSimulator"
+             xmlns:prism="http://prismlibrary.com/"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             x:Class="StorageSimulator.Views.StoreListView">
+    <Grid RowDefinitions="Auto,*">
+        <TextBlock Text="Lager"
+                   FontSize="18"
+                   Grid.Row="0"
+                   Grid.ColumnSpan="3"
+                   Margin="10,10,10,10"/>
+        <ListBox x:Name="Stores" 
+                 Grid.Row="1" 
+                 Items="{Binding Stores}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <views:StoreView />                
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>           
+</UserControl>

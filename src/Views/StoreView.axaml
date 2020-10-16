@@ -1,0 +1,24 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="StorageSimulator.Views.StoreView">
+    <Grid>
+        <Border Background="Blue">
+            <Grid ColumnDefinitions="100, *">
+                <TextBlock Text="{Binding Name}"
+                           Grid.Column="0"
+                           Margin="10,2,10,2"
+                           Foreground="Yellow"/>
+                <ListBox Grid.Column="1" Items="{Binding Shelves}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text = "{Binding Number}"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
+        </Border>
+    </Grid>           
+</UserControl>

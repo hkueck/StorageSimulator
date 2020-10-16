@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Prism.Events;
 using StorageSimulator.Core.Events;
 using StorageSimulator.Core.Interfaces;
@@ -13,16 +12,20 @@ namespace StorageSimulator.Core.Model
         private readonly ISendResponseUseCase _sendUseCase;
         private readonly IAnalyseRequestUseCase _analyseRequestUseCase;
         private readonly IEventAggregator _eventAggregator;
+        private PubSubEvent<AddStoreEvent> _addStoreEvent;
+        private PubSubEvent<AddShelfEvent> _addShelfEvent;
 
         public IList<Store> Stores { get; } = new List<Store>();
         public IList<StoragePoint> StoragePoints { get; } = new List<StoragePoint>();
-        
+
         public StorageSystem(IWatchRequestUseCase watchRequestUseCase, ISendResponseUseCase sendUseCase, IAnalyseRequestUseCase analyseRequestUseCase,
             IEventAggregator eventAggregator)
         {
             _eventAggregator = eventAggregator;
             var requestEvent = _eventAggregator.GetEvent<PubSubEvent<MovementRequestEvent>>();
             requestEvent.Subscribe(OnMovementRequest);
+            _addStoreEvent = _eventAggregator.GetEvent<PubSubEvent<AddStoreEvent>>();
+            _addShelfEvent = _eventAggregator.GetEvent<PubSubEvent<AddShelfEvent>>();
             _watchRequestUseCase = watchRequestUseCase;
             _sendUseCase = sendUseCase;
             _analyseRequestUseCase = analyseRequestUseCase;
@@ -38,12 +41,12 @@ namespace StorageSimulator.Core.Model
             {
                 _sendUseCase.Execute(response);
                 var responseEvent = _eventAggregator.GetEvent<PubSubEvent<MovementResponseEvent>>();
-                responseEvent.Publish(new MovementResponseEvent{Response = response});
+                responseEvent.Publish(new MovementResponseEvent {Response = response});
             }
             catch (IOException exception)
             {
                 var exceptionEvent = _eventAggregator.GetEvent<PubSubEvent<ExceptionEvent>>();
-                exceptionEvent.Publish(new ExceptionEvent{Exception = exception});
+                exceptionEvent.Publish(new ExceptionEvent {Exception = exception});
             }
         }
 
@@ -55,6 +58,7 @@ namespace StorageSimulator.Core.Model
         public void AddStore(Store store)
         {
             Stores.Add(store);
+            _addStoreEvent.Publish(new AddStoreEvent {Store = store});
         }
 
         public void AddPartToShelf(Shelf shelf, Part part)
@@ -65,6 +69,7 @@ namespace StorageSimulator.Core.Model
         public void AddShelfToStore(Store store, Shelf shelf)
         {
             store.Shelves.Add(shelf);
+            _addShelfEvent.Publish(new AddShelfEvent {Shelf = shelf, Store = store});
         }
 
         public void RemovePartFromShelf(Shelf shelf, Part part)

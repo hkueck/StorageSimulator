@@ -11,13 +11,13 @@ using StorageSimulator.Views;
 
 namespace StorageSimulator
 {
-    public class App: PrismApplication
+    public class App : PrismApplication
     {
         public static AppBuilder BuildAvaloniaApp() =>
             AppBuilder
                 .Configure<App>()
                 .UsePlatformDetect();
-        
+
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
@@ -26,11 +26,11 @@ namespace StorageSimulator
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
+            containerRegistry.RegisterSingleton<IStorageSystem, StorageSystem>();
             containerRegistry.Register<IWatchRequestUseCase, WatchRequestUseCase>();
             containerRegistry.Register<IWatchRequestService, WatchRequestService>();
             containerRegistry.Register<ISendResponseUseCase, SendResponseUseCase>();
             containerRegistry.Register<IAnalyseRequestUseCase, AnalyseRequestUseCase>();
-            containerRegistry.Register<IStorageSystem, StorageSystem>();
             containerRegistry.Register<IStorageSimulatorConfig, StorageSimulatorConfig>();
             containerRegistry.Register<IMovementRequestListViewModel, MovementRequestListViewModel>();
             containerRegistry.Register<IMovementRequestViewModel, MovementRequestViewModel>();
@@ -40,7 +40,7 @@ namespace StorageSimulator
 
         protected override IAvaloniaObject CreateShell()
         {
-            return Container.Resolve<Shell>();        
+            return Container.Resolve<Shell>();
         }
     }
 }

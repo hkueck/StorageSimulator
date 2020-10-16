@@ -14,7 +14,7 @@ namespace StorageSimulatorTests.ViewModels
         {
             var eventAggregator = new EventAggregator();
             var exceptionEvent = eventAggregator.GetEvent<PubSubEvent<ExceptionEvent>>();
-            var viewModel = new LogListViewModel(eventAggregator, true);
+            var viewModel = new LogListViewModel(eventAggregator);
             var exception = new IOException("expected message");
             
             exceptionEvent.Publish(new ExceptionEvent{Exception = exception});

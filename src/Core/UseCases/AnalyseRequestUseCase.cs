@@ -25,6 +25,7 @@ namespace StorageSimulator.Core.UseCases
                         break;
                 }
             }
+
             return response;
         }
 
@@ -54,6 +55,7 @@ namespace StorageSimulator.Core.UseCases
             {
                 response.Data.Add(movementData);
             }
+
             return response;
         }
 
@@ -65,7 +67,8 @@ namespace StorageSimulator.Core.UseCases
                 shelf = new Shelf {Number = request.TargetCompartment};
                 StorageSystem.AddShelfToStore(store, shelf);
             }
-            var position = shelf.Parts.Count-1;
+
+            var position = shelf.Parts.Count - 1;
             for (int i = 0; i < request.Quantity; i++)
             {
                 if (position < shelf.Parts.Count)
@@ -74,6 +77,7 @@ namespace StorageSimulator.Core.UseCases
                     StorageSystem.RemovePartFromShelf(shelf, part);
                     StorageSystem.AddPartToStoragePoint(storagePoint, part);
                 }
+
                 position--;
             }
         }
@@ -86,6 +90,7 @@ namespace StorageSimulator.Core.UseCases
                 shelf = new Shelf {Number = request.TargetCompartment};
                 StorageSystem.AddShelfToStore(store, shelf);
             }
+
             var position = shelf.Parts.Count;
             for (int i = 0; i < request.Quantity; i++)
             {
@@ -114,8 +119,8 @@ namespace StorageSimulator.Core.UseCases
             }
 
             var storagePoint = StorageSystem.StoragePoints.First(sp => sp.Name == request.Target);
-            storagePoint.Parts.Add(new Part{Barcode = request.Data.First().Barcode, Position = storagePoint.Parts.Count});
-            
+            storagePoint.Parts.Add(new Part {Barcode = request.Data.First().Barcode, Position = storagePoint.Parts.Count});
+
             var response = new MovementResponse
             {
                 Target = request.Target, Quantity = request.Quantity, Info = $"Response for {request.Info}", Ticket = request.Ticket,
@@ -125,6 +130,7 @@ namespace StorageSimulator.Core.UseCases
             {
                 response.Data.Add(movementData);
             }
+
             return response;
         }
 
@@ -145,12 +151,12 @@ namespace StorageSimulator.Core.UseCases
         {
             if (name.Contains("TV") || name.Contains("AV"))
             {
-                StorageSystem.AddStoragePoint(new StoragePoint{Name = name});
+                StorageSystem.AddStoragePoint(new StoragePoint {Name = name});
             }
             else
             {
-                var store = new Store{Name = name};
-                store.Shelves.Add(new Shelf{Number = shelf});
+                var store = new Store {Name = name};
+                store.Shelves.Add(new Shelf {Number = shelf});
                 StorageSystem.AddStore(store);
             }
         }

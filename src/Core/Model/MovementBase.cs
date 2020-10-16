@@ -15,7 +15,7 @@ namespace StorageSimulator.Core.Model
         public string SourceCompartment { get; set; }
         [XmlElement("TARGET")]
         public string Target { get; set; }
-        [XmlElement("TARGETCOMPONENT")]
+        [XmlElement("TARGETCOMPARTMENT")]
         public string TargetCompartment { get; set; }
         [XmlElement("TIMESTAMP")] 
         public string TimestampString { get; set; }

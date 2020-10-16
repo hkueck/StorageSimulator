@@ -224,6 +224,41 @@ namespace StorageSimulatorTests.UseCases
         }
 
         [Fact]
+        public void AnalyseMovementToStoreWithNewShelfShouldAddShelf()
+        {
+            Store addToStore = null;
+            Shelf shelf = null;
+            var store = new Store {Name = "B01"};
+            store.Shelves.Add(new Shelf {Number = "1"});
+            var stores = new List<Store> {store};
+            var storagePoint = new StoragePoint{Name = "TV01"};
+            var storagePoints = new List<StoragePoint>{storagePoint};
+            var storageSystem = new Mock<IStorageSystem>();
+            storageSystem.SetupGet(s => s.Stores).Returns(stores);
+            storageSystem.SetupGet((s => s.StoragePoints)).Returns(storagePoints);
+            storageSystem.Setup(s => s.AddShelfToStore(It.IsAny<Store>(), It.IsAny<Shelf>())).Callback<Store, Shelf>((s, sh) =>
+            {
+                addToStore = s;
+                shelf = sh;
+            });
+            
+            _useCase.StorageSystem = storageSystem.Object;
+            var request = new MovementRequest
+            {
+                Ticket = Guid.NewGuid(), Info = "part to workstation", Quantity = 3, Target = "B01",
+                TargetCompartment = "2", Task = AutomationTasks.Transport, Source = "TV01", SourceCompartment = "1", Timestamp = DateTime.UtcNow
+            };
+            request.Data.Add(new MovementData {Barcode = "expected"});
+
+            _useCase.Execute(request);
+
+            addToStore.Should().NotBeNull();
+            addToStore.Should().Be(store);
+            shelf.Should().NotBeNull();
+            shelf.Number.Should().Be("2");
+        }
+        
+        [Fact]
         public void AnalyseMovementToStoreShouldAddPartsToStore()
         {
             var store = new Store {Name = "B01"};
@@ -258,7 +293,7 @@ namespace StorageSimulatorTests.UseCases
         }
 
         [Fact]
-        public void AnanlyseMovementToWorkstationShouldRemovePartsFromStore()
+        public void AnalyseMovementToWorkstationShouldRemovePartsFromStore()
         {
             var store = new Store {Name = "B01"};
             var shelf = new Shelf {Number = "1"};

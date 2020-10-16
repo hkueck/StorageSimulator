@@ -17,7 +17,7 @@
            <ListBox.ItemTemplate>
                <DataTemplate>
                    <Border Background="Blue">
-                       <Grid ColumnDefinitions="80, 80, 150, 80, 80, 80">
+                       <Grid ColumnDefinitions="180, 180, 150, 80, 80, 80, 80">
                            <TextBlock Text="{Binding Name}"
                                       Grid.Column="0"
                                       Margin="10,2,10,2"

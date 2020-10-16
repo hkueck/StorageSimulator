@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Threading;
 using Prism.Events;
 using Prism.Mvvm;
 using StorageSimulator.Core.Events;
@@ -6,21 +7,17 @@ using StorageSimulator.Core.Interfaces;
 
 namespace StorageSimulator.ViewModels
 {
-    public class MovementRequestListViewModel: BindableBase, IMovementRequestListViewModel
+    public class MovementRequestListViewModel : BindableBase, IMovementRequestListViewModel
     {
         public ObservableCollection<IMovementRequestViewModel> Requests { get; } = new ObservableCollection<IMovementRequestViewModel>();
 
-        public MovementRequestListViewModel(IEventAggregator eventAggregator, bool uiThread = true)
+        public MovementRequestListViewModel(IEventAggregator eventAggregator)
         {
             var requestEvent = eventAggregator.GetEvent<PubSubEvent<MovementRequestEvent>>();
-            if (uiThread)    
-            {
+            if (!Thread.CurrentThread.IsBackground)
                 requestEvent.Subscribe(OnReceiveRequest, ThreadOption.UIThread);
-            }
             else // for test only
-            {
                 requestEvent.Subscribe(OnReceiveRequest);
-            }
         }
 
         private void OnReceiveRequest(MovementRequestEvent request)
