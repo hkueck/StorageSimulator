@@ -147,6 +147,7 @@ namespace StorageSimulatorTests.UseCases
             newStore.Shelves.Count.Should().Be(1);
             var shelf = newStore.Shelves.First();
             shelf.Number.Should().Be("1");
+            shelf.Store.Should().Be(newStore);
         }
 
         [Fact]
@@ -178,7 +179,7 @@ namespace StorageSimulatorTests.UseCases
                 TargetCompartment = "1", Task = AutomationTasks.Transport, Source = "B01", SourceCompartment = "1", Timestamp = DateTime.UtcNow
             };
             request.Data.Add(new MovementData {Barcode = expected});
-            
+
             _useCase.Execute(request);
 
             storageSystem.Verify(s => s.AddStore(It.IsAny<Store>()));
@@ -187,7 +188,44 @@ namespace StorageSimulatorTests.UseCases
             newStore.Shelves.Count.Should().Be(1);
             var shelf = newStore.Shelves.First();
             shelf.Number.Should().Be("1");
+            shelf.Store.Should().Be(newStore);
             newStoragePoint.Name.Should().Be("AV01");
+        }
+
+        [Fact]
+        public void AnalyseMovementToWorkstationShouldAddShelf()
+        {
+            var expected = "12345";
+            Shelf shelf = null;
+            var store = new Store {Name = "B01"};
+            StoragePoint newStoragePoint;
+            var storagePoint = new StoragePoint {Name = "TV01"};
+            var storagePoints = new List<StoragePoint> {storagePoint};
+            var stores = new List<Store> {store};
+            var storageSystem = new Mock<IStorageSystem>();
+            storageSystem.SetupGet(s => s.StoragePoints).Returns(storagePoints);
+            storageSystem.Setup(s => s.AddStoragePoint(It.IsAny<StoragePoint>())).Callback<StoragePoint>(point =>
+            {
+                newStoragePoint = point;
+                storageSystem.SetupGet(s => s.StoragePoints).Returns(new List<StoragePoint> {newStoragePoint});
+            });
+            storageSystem.SetupGet(s => s.Stores).Returns(stores);
+            storageSystem.Setup(s => s.AddShelfToStore(It.IsAny<Store>(), It.IsAny<Shelf>())).Callback<Store, Shelf>((s, sh) =>
+            {
+                shelf = sh;
+            });
+            _useCase.StorageSystem = storageSystem.Object;
+            var request = new MovementRequest
+            {
+                Ticket = Guid.NewGuid(), Info = "part to workstation", Quantity = 1, Target = "AV01",
+                TargetCompartment = "1", Task = AutomationTasks.Transport, Source = "B01", SourceCompartment = "1", Timestamp = DateTime.UtcNow
+            };
+            request.Data.Add(new MovementData {Barcode = expected});
+
+            _useCase.Execute(request);
+
+            shelf.Number.Should().Be("1");
+            shelf.Store.Should().Be(store);
         }
 
         [Fact]
@@ -196,8 +234,8 @@ namespace StorageSimulatorTests.UseCases
             var store = new Store {Name = "B01"};
             store.Shelves.Add(new Shelf {Number = "1"});
             var stores = new List<Store> {store};
-            var storagePoint = new StoragePoint{Name = "TV01"};
-            var storagePoints = new List<StoragePoint>{storagePoint};
+            var storagePoint = new StoragePoint {Name = "TV01"};
+            var storagePoints = new List<StoragePoint> {storagePoint};
             var storageSystem = new Mock<IStorageSystem>();
             storageSystem.SetupGet(s => s.Stores).Returns(stores);
             storageSystem.SetupGet((s => s.StoragePoints)).Returns(storagePoints);
@@ -231,8 +269,8 @@ namespace StorageSimulatorTests.UseCases
             var store = new Store {Name = "B01"};
             store.Shelves.Add(new Shelf {Number = "1"});
             var stores = new List<Store> {store};
-            var storagePoint = new StoragePoint{Name = "TV01"};
-            var storagePoints = new List<StoragePoint>{storagePoint};
+            var storagePoint = new StoragePoint {Name = "TV01"};
+            var storagePoints = new List<StoragePoint> {storagePoint};
             var storageSystem = new Mock<IStorageSystem>();
             storageSystem.SetupGet(s => s.Stores).Returns(stores);
             storageSystem.SetupGet((s => s.StoragePoints)).Returns(storagePoints);
@@ -241,7 +279,7 @@ namespace StorageSimulatorTests.UseCases
                 addToStore = s;
                 shelf = sh;
             });
-            
+
             _useCase.StorageSystem = storageSystem.Object;
             var request = new MovementRequest
             {
@@ -256,16 +294,17 @@ namespace StorageSimulatorTests.UseCases
             addToStore.Should().Be(store);
             shelf.Should().NotBeNull();
             shelf.Number.Should().Be("2");
+            shelf.Store.Should().Be(store);
         }
-        
+
         [Fact]
         public void AnalyseMovementToStoreShouldAddPartsToStore()
         {
             var store = new Store {Name = "B01"};
             store.Shelves.Add(new Shelf {Number = "1"});
             var stores = new List<Store> {store};
-            var storagePoint = new StoragePoint{Name = "TV01"};
-            var storagePoints = new List<StoragePoint>{storagePoint};
+            var storagePoint = new StoragePoint {Name = "TV01"};
+            var storagePoints = new List<StoragePoint> {storagePoint};
             var storageSystem = new Mock<IStorageSystem>();
             storageSystem.SetupGet(s => s.Stores).Returns(stores);
             storageSystem.SetupGet((s => s.StoragePoints)).Returns(storagePoints);
@@ -277,8 +316,8 @@ namespace StorageSimulatorTests.UseCases
                 Ticket = Guid.NewGuid(), Info = "part to store", Quantity = 3, Target = "B01",
                 TargetCompartment = "1", Task = AutomationTasks.Transport, Source = "TV01", SourceCompartment = "1", Timestamp = DateTime.UtcNow
             };
-            request.Data.Add(new MovementData{Barcode = "barcode1", Index = "1"});
-            request.Data.Add(new MovementData{Barcode = "barcode2", Index = "2"});
+            request.Data.Add(new MovementData {Barcode = "barcode1", Index = "1"});
+            request.Data.Add(new MovementData {Barcode = "barcode2", Index = "2"});
 
             _useCase.Execute(request);
 
@@ -299,12 +338,13 @@ namespace StorageSimulatorTests.UseCases
             var shelf = new Shelf {Number = "1"};
             for (int i = 0; i < 4; i++)
             {
-                shelf.Parts.Add(new Part{Position = i});
+                shelf.Parts.Add(new Part {Position = i});
             }
+
             store.Shelves.Add(shelf);
             var stores = new List<Store> {store};
-            var storagePoint = new StoragePoint{Name = "AV01"};
-            var storagePoints = new List<StoragePoint>{storagePoint};
+            var storagePoint = new StoragePoint {Name = "AV01"};
+            var storagePoints = new List<StoragePoint> {storagePoint};
             var storageSystem = new Mock<IStorageSystem>();
             storageSystem.SetupGet(s => s.Stores).Returns(stores);
             storageSystem.SetupGet((s => s.StoragePoints)).Returns(storagePoints);

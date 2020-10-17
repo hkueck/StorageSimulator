@@ -7,14 +7,25 @@
              xmlns:prism="http://prismlibrary.com/"
              prism:ViewModelLocator.AutoWireViewModel="True"
              x:Class="StorageSimulator.Views.StoreListView">
-    <Grid RowDefinitions="Auto,*">
+    <Grid RowDefinitions="Auto,*" ColumnDefinitions="110, 100, *">
         <TextBlock Text="Lager"
                    FontSize="18"
                    Grid.Row="0"
-                   Grid.ColumnSpan="3"
+                   Grid.Column="0"
+                   Margin="10,10,10,10"/>
+        <TextBlock Text="Fach"
+                   FontSize="18"
+                   Grid.Row="0"
+                   Grid.Column="1"
+                   Margin="10,10,10,10"/>
+        <TextBlock Text="Teile"
+                   FontSize="18"
+                   Grid.Row="0"
+                   Grid.Column="2"
                    Margin="10,10,10,10"/>
         <ListBox x:Name="Stores" 
                  Grid.Row="1" 
+                 Grid.ColumnSpan="3"
                  Items="{Binding Stores}">
             <ListBox.ItemTemplate>
                 <DataTemplate>

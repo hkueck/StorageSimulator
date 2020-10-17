@@ -14,6 +14,7 @@ namespace StorageSimulator.Core.Model
         private readonly IEventAggregator _eventAggregator;
         private PubSubEvent<AddStoreEvent> _addStoreEvent;
         private PubSubEvent<AddShelfEvent> _addShelfEvent;
+        private PubSubEvent<AddPartEvent> _addPartEvent;
 
         public IList<Store> Stores { get; } = new List<Store>();
         public IList<StoragePoint> StoragePoints { get; } = new List<StoragePoint>();
@@ -26,6 +27,7 @@ namespace StorageSimulator.Core.Model
             requestEvent.Subscribe(OnMovementRequest);
             _addStoreEvent = _eventAggregator.GetEvent<PubSubEvent<AddStoreEvent>>();
             _addShelfEvent = _eventAggregator.GetEvent<PubSubEvent<AddShelfEvent>>();
+            _addPartEvent = _eventAggregator.GetEvent<PubSubEvent<AddPartEvent>>();
             _watchRequestUseCase = watchRequestUseCase;
             _sendUseCase = sendUseCase;
             _analyseRequestUseCase = analyseRequestUseCase;
@@ -64,6 +66,7 @@ namespace StorageSimulator.Core.Model
         public void AddPartToShelf(Shelf shelf, Part part)
         {
             shelf.Parts.Add(part);
+            _addPartEvent.Publish(new AddPartEvent{Part = part, Shelf = shelf});
         }
 
         public void AddShelfToStore(Store store, Shelf shelf)

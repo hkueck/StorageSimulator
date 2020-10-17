@@ -31,16 +31,13 @@ namespace StorageSimulator.ViewModels
             _eventAggregator = eventAggregator;
             _addShelfEvent = _eventAggregator.GetEvent<PubSubEvent<AddShelfEvent>>();
             if (Thread.CurrentThread.IsBackground)
-            {
                 _addShelfEvent.Subscribe(OnAddShelf);
-            }
             else
-            {
                 _addShelfEvent.Subscribe(OnAddShelf, ThreadOption.UIThread);
-            }
+
             foreach (var shelf in store.Shelves)
             {
-                Shelves.Add(new ShelfViewModel(shelf));
+                Shelves.Add(new ShelfViewModel(shelf, _eventAggregator));
             }
         }
 
@@ -48,7 +45,7 @@ namespace StorageSimulator.ViewModels
         {
             if (_store.Name == addShelfEvent.Store.Name)
             {
-                var shelfViewModel = new ShelfViewModel(addShelfEvent.Shelf);
+                var shelfViewModel = new ShelfViewModel(addShelfEvent.Shelf, _eventAggregator);
                 Shelves.Add(shelfViewModel);
             }
         }

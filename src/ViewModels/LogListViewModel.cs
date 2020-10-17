@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Threading;
+using Avalonia.Threading;
 using Prism.Events;
 using Prism.Mvvm;
 using StorageSimulator.Core.Events;
@@ -7,8 +8,10 @@ using StorageSimulator.Core.Interfaces;
 
 namespace StorageSimulator.ViewModels
 {
-    public class LogListViewModel: BindableBase, ILogListViewModel
+    public class LogListViewModel : BindableBase, ILogListViewModel
     {
+        public ObservableCollection<LogViewModel> Logs { get; } = new ObservableCollection<LogViewModel>();
+
         public LogListViewModel(IEventAggregator eventAggregator)
         {
             var exceptionEvent = eventAggregator.GetEvent<PubSubEvent<ExceptionEvent>>();
@@ -23,7 +26,5 @@ namespace StorageSimulator.ViewModels
             var viewModel = new LogViewModel(request.Exception);
             Logs.Add(viewModel);
         }
-
-        public ObservableCollection<LogViewModel> Logs { get; } = new ObservableCollection<LogViewModel>();
     }
 }

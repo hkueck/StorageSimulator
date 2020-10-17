@@ -64,7 +64,7 @@ namespace StorageSimulator.Core.UseCases
             var shelf = store.Shelves.FirstOrDefault(s => s.Number == request.SourceCompartment);
             if (null == shelf)
             {
-                shelf = new Shelf {Number = request.TargetCompartment};
+                shelf = new Shelf {Number = request.TargetCompartment, Store = store};
                 StorageSystem.AddShelfToStore(store, shelf);
             }
 
@@ -87,7 +87,7 @@ namespace StorageSimulator.Core.UseCases
             var shelf = store.Shelves.FirstOrDefault(s => s.Number == request.TargetCompartment);
             if (null == shelf)
             {
-                shelf = new Shelf {Number = request.TargetCompartment};
+                shelf = new Shelf {Number = request.TargetCompartment, Store = store};
                 StorageSystem.AddShelfToStore(store, shelf);
             }
 
@@ -156,7 +156,7 @@ namespace StorageSimulator.Core.UseCases
             else
             {
                 var store = new Store {Name = name};
-                store.Shelves.Add(new Shelf {Number = shelf});
+                store.Shelves.Add(new Shelf {Number = shelf, Store = store});
                 StorageSystem.AddStore(store);
             }
         }
