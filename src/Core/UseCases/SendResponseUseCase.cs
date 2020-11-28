@@ -1,6 +1,8 @@
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
+using Prism.Events;
+using StorageSimulator.Core.Events;
 using StorageSimulator.Core.Interfaces;
 using StorageSimulator.Core.Model;
 
@@ -9,10 +11,12 @@ namespace StorageSimulator.Core.UseCases
     public class SendResponseUseCase : ISendResponseUseCase
     {
         private readonly IStorageSimulatorConfig _configuration;
+        private readonly IEventAggregator _eventAggregator;
 
-        public SendResponseUseCase(IStorageSimulatorConfig configuration)
+        public SendResponseUseCase(IStorageSimulatorConfig configuration, IEventAggregator eventAggregator)
         {
             _configuration = configuration;
+            _eventAggregator = eventAggregator;
         }
 
         public void Execute(MovementResponse movementResponse)
@@ -40,6 +44,8 @@ namespace StorageSimulator.Core.UseCases
                 }
             }
             File.Move(tempFile, responseFile);
+            var responseEvent = _eventAggregator.GetEvent<PubSubEvent<MovementResponseEvent>>();
+            responseEvent.Publish(new MovementResponseEvent {Response = movementResponse});
         }
     }
 }

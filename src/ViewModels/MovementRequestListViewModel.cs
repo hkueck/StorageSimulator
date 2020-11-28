@@ -9,7 +9,18 @@ namespace StorageSimulator.ViewModels
 {
     public class MovementRequestListViewModel : BindableBase, IMovementRequestListViewModel
     {
+        private IMovementRequestViewModel _selectedItem;
         public ObservableCollection<IMovementRequestViewModel> Requests { get; } = new ObservableCollection<IMovementRequestViewModel>();
+
+        public IMovementRequestViewModel SelectedItem
+        {
+            get => _selectedItem;
+            set
+            {
+                _selectedItem = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public MovementRequestListViewModel(IEventAggregator eventAggregator)
         {
@@ -23,7 +34,8 @@ namespace StorageSimulator.ViewModels
         private void OnReceiveRequest(MovementRequestEvent request)
         {
             var viewModel = new MovementRequestViewModel(request.MovementRequest);
-            Requests.Add(viewModel);
+            Requests.Insert(0, viewModel);
+            SelectedItem = viewModel;
         }
     }
 }

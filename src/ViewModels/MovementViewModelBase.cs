@@ -26,7 +26,7 @@ namespace StorageSimulator.ViewModels
             Target = movement.Target;
             TargetShelf = movement.TargetCompartment;
             Quantity = movement.Quantity;
-            Timestamp = movement.Timestamp;
+            Timestamp = movement.Timestamp.ToLocalTime();
             Ticket = movement.Ticket;
             SetBarcode(movement.Data);
         }

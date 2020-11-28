@@ -32,7 +32,7 @@ namespace StorageSimulatorTests.Infrastructure
             service.Run();
             CreateMovementRequest(requestFile);
 
-            Task.Delay(25).Wait();
+            Task.Delay(45).Wait();
             eventAggregator.Verify(e => e.GetEvent<PubSubEvent<StorageSimulator.Core.Events.MovementRequestEvent>>());
             requestEvent.PublishCalled.Should().BeTrue();
         }

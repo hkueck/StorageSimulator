@@ -8,7 +8,6 @@ using Prism.Events;
 using StorageSimulator.Core.Events;
 using StorageSimulator.Core.Interfaces;
 using StorageSimulator.Core.Model;
-using StorageSimulator.Core.Types;
 using Xunit;
 
 namespace StorageSimulatorTests.Model
@@ -24,13 +23,10 @@ namespace StorageSimulatorTests.Model
         public StorageSystemTest()
         {
             _watchUseCase = new Mock<IWatchRequestUseCase>();
-            _sendUseCase = new Mock<ISendResponseUseCase>();
             _requestAnalyser = new Mock<IAnalyseRequestUseCase>();
             _eventAggregator = new EventAggregator();
-            
-            _storageSystem = new StorageSystem(_watchUseCase.Object, _sendUseCase.Object, _requestAnalyser.Object, _eventAggregator);
-
-            _requestAnalyser.Setup(a => a.Execute(It.IsAny<MovementRequest>())).Returns(new MovementResponse());
+            _sendUseCase = new Mock<ISendResponseUseCase>();
+            _storageSystem = new StorageSystem(_watchUseCase.Object, _requestAnalyser.Object, _eventAggregator);
         }
         
         [Fact]
@@ -39,46 +35,6 @@ namespace StorageSimulatorTests.Model
             _storageSystem.Should().NotBeNull();
             _watchUseCase.Verify(uc => uc.Execute());
         }
-
-        [Fact]
-        public void ReceivingRequestShouldSendResponse()
-        {
-            MovementResponse sentResponse = null;
-            _sendUseCase.Setup(u => u.Execute(It.IsAny<MovementResponse>())).Callback<MovementResponse>(response => sentResponse = response);
-            var requestEvent = _eventAggregator.GetEvent<PubSubEvent<MovementRequestEvent>>();
-            var movement = new MovementRequest
-            {
-                Info = "info", Quantity = 2, Source = "source", Target = "target", Task = AutomationTasks.Insert,
-                Ticket = Guid.NewGuid(), Timestamp = DateTime.UtcNow, SourceCompartment = "4", TargetCompartment = "2"
-            };
-            var movementRequest = new MovementRequestEvent{MovementRequest = movement};
-            
-            requestEvent.Publish(movementRequest);
-
-            sentResponse.Should().NotBeNull();
-        }
-
-        [Fact]
-        public void ReceivingRequestShouldSendResponseEvent()
-        {
-            MovementResponseEvent receivedEvent = null;
-            _sendUseCase.Setup(u => u.Execute(It.IsAny<MovementResponse>())).Callback<MovementResponse>(response => { });
-            var requestEvent = _eventAggregator.GetEvent<PubSubEvent<MovementRequestEvent>>();
-            var responseEvent = _eventAggregator.GetEvent<PubSubEvent<MovementResponseEvent>>();
-            responseEvent.Subscribe(event1 => receivedEvent = event1);
-            var movement = new MovementRequest
-            {
-                Info = "info", Quantity = 2, Source = "source", Target = "target", Task = AutomationTasks.Insert,
-                Ticket = Guid.NewGuid(), Timestamp = DateTime.UtcNow, SourceCompartment = "4", TargetCompartment = "2"
-            };
-            var movementRequest = new MovementRequestEvent{MovementRequest = movement};
-            
-            requestEvent.Publish(movementRequest);
-
-            Task.Delay(25).Wait();
-            receivedEvent.Should().NotBeNull();
-        }
-
         [Fact]
         public void ReceivingRequestShouldCallRequestAnalyser()
         {
@@ -111,11 +67,7 @@ namespace StorageSimulatorTests.Model
         [Fact]
         public void OnMovementRequestCantWriteResponseShouldSendExceptionMessage()
         {
-            ExceptionEvent receivedExceptionEvent = null;
             _sendUseCase.Setup(u => u.Execute(It.IsAny<MovementResponse>())).Throws<IOException>();
-            _requestAnalyser.Setup(a => a.Execute(It.IsAny<MovementRequest>())).Returns(new MovementResponse());
-            var exceptionEvent = _eventAggregator.GetEvent<PubSubEvent<ExceptionEvent>>();
-            exceptionEvent.Subscribe(event1 => receivedExceptionEvent = event1);
             var request = new MovementRequest
             {
                 Ticket = Guid.NewGuid(), Info = "part in new storage point", Quantity = 1, Target = "TV01",
@@ -128,8 +80,6 @@ namespace StorageSimulatorTests.Model
             requestEvent.Publish(movementRequest);
 
             Task.Delay(25).Wait();
-            receivedExceptionEvent.Should().NotBeNull();
-            receivedExceptionEvent.Exception.Should().BeOfType(typeof(IOException));
         }
     }
 }

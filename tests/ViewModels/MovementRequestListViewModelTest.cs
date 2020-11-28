@@ -24,7 +24,8 @@ namespace StorageSimulatorTests.ViewModels
             requestEvent.Publish(movementRequestEvent);
 
             viewModel.Requests.Count.Should().Be(1);
-            var requestViewModel = viewModel.Requests.First();
+            var requestViewModel = viewModel.SelectedItem;
+            requestViewModel.Should().NotBeNull();
             requestViewModel.Ticket.Should().Be(request.Ticket);
         }
     }

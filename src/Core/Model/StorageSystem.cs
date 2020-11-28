@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.IO;
 using Prism.Events;
 using StorageSimulator.Core.Events;
 using StorageSimulator.Core.Interfaces;
@@ -9,9 +8,7 @@ namespace StorageSimulator.Core.Model
     public class StorageSystem : IStorageSystem
     {
         private readonly IWatchRequestUseCase _watchRequestUseCase;
-        private readonly ISendResponseUseCase _sendUseCase;
         private readonly IAnalyseRequestUseCase _analyseRequestUseCase;
-        private readonly IEventAggregator _eventAggregator;
         private PubSubEvent<AddStoreEvent> _addStoreEvent;
         private PubSubEvent<AddShelfEvent> _addShelfEvent;
         private PubSubEvent<AddPartEvent> _addPartEvent;
@@ -19,17 +16,15 @@ namespace StorageSimulator.Core.Model
         public IList<Store> Stores { get; } = new List<Store>();
         public IList<StoragePoint> StoragePoints { get; } = new List<StoragePoint>();
 
-        public StorageSystem(IWatchRequestUseCase watchRequestUseCase, ISendResponseUseCase sendUseCase, IAnalyseRequestUseCase analyseRequestUseCase,
+        public StorageSystem(IWatchRequestUseCase watchRequestUseCase, IAnalyseRequestUseCase analyseRequestUseCase,
             IEventAggregator eventAggregator)
         {
-            _eventAggregator = eventAggregator;
-            var requestEvent = _eventAggregator.GetEvent<PubSubEvent<MovementRequestEvent>>();
+            var requestEvent = eventAggregator.GetEvent<PubSubEvent<MovementRequestEvent>>();
             requestEvent.Subscribe(OnMovementRequest);
-            _addStoreEvent = _eventAggregator.GetEvent<PubSubEvent<AddStoreEvent>>();
-            _addShelfEvent = _eventAggregator.GetEvent<PubSubEvent<AddShelfEvent>>();
-            _addPartEvent = _eventAggregator.GetEvent<PubSubEvent<AddPartEvent>>();
+            _addStoreEvent = eventAggregator.GetEvent<PubSubEvent<AddStoreEvent>>();
+            _addShelfEvent = eventAggregator.GetEvent<PubSubEvent<AddShelfEvent>>();
+            _addPartEvent = eventAggregator.GetEvent<PubSubEvent<AddPartEvent>>();
             _watchRequestUseCase = watchRequestUseCase;
-            _sendUseCase = sendUseCase;
             _analyseRequestUseCase = analyseRequestUseCase;
             _analyseRequestUseCase.StorageSystem = this;
             _watchRequestUseCase.Execute();
@@ -38,18 +33,7 @@ namespace StorageSimulator.Core.Model
         private void OnMovementRequest(MovementRequestEvent movementRequestEvent)
         {
             var movement = movementRequestEvent.MovementRequest;
-            var response = _analyseRequestUseCase.Execute(movement);
-            try
-            {
-                _sendUseCase.Execute(response);
-                var responseEvent = _eventAggregator.GetEvent<PubSubEvent<MovementResponseEvent>>();
-                responseEvent.Publish(new MovementResponseEvent {Response = response});
-            }
-            catch (IOException exception)
-            {
-                var exceptionEvent = _eventAggregator.GetEvent<PubSubEvent<ExceptionEvent>>();
-                exceptionEvent.Publish(new ExceptionEvent {Exception = exception});
-            }
+            _analyseRequestUseCase.Execute(movement);
         }
 
         public void AddStoragePoint(StoragePoint storagePoint)

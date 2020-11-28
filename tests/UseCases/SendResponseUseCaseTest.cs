@@ -3,6 +3,8 @@ using System.IO;
 using System.Xml.Serialization;
 using FluentAssertions;
 using Moq;
+using Prism.Events;
+using StorageSimulator.Core.Events;
 using StorageSimulator.Core.Interfaces;
 using StorageSimulator.Core.Model;
 using StorageSimulator.Core.Types;
@@ -16,6 +18,9 @@ namespace StorageSimulatorTests.UseCases
         [Fact]
         public void ExecuteShouldWriteResponseFile()
         {
+            var eventAggregator = new Mock<IEventAggregator>();
+            var responseEvent = new Mock<PubSubEvent<MovementResponseEvent>>();
+            eventAggregator.Setup(ea => ea.GetEvent<PubSubEvent<MovementResponseEvent>>()).Returns(responseEvent.Object);
             var responsePath = $"./responsePath";
             var responseFile = $"{responsePath}/MovementResponse_V.xml";
             var expectedTicket = Guid.NewGuid();
@@ -29,7 +34,7 @@ namespace StorageSimulatorTests.UseCases
             PrepareResponseDirectory(responsePath);
             var config = new Mock<IStorageSimulatorConfig>();
             config.Setup(c => c.CommunicationPath).Returns(responsePath);
-            ISendResponseUseCase useCase = new SendResponseUseCase(config.Object);
+            ISendResponseUseCase useCase = new SendResponseUseCase(config.Object, eventAggregator.Object);
 
             useCase.Execute(expected);
 
@@ -47,11 +52,15 @@ namespace StorageSimulatorTests.UseCases
             response.TimestampString.Should().Be(expectedTimestamp.ToString("dd.MM.yyyy hh:mm:ss"));
             response.SourceCompartment.Should().Be("2");
             response.TargetCompartment.Should().Be("3");
+            responseEvent.Verify(e => e.Publish(It.IsAny<MovementResponseEvent>()));
         }
 
         [Fact]
         public void IfResponseExistsExecuteShouldThrowIOException()
         {
+            var eventAggregator = new Mock<IEventAggregator>();
+            var responseEvent = new Mock<PubSubEvent<MovementResponseEvent>>();
+            eventAggregator.Setup(ea => ea.GetEvent<PubSubEvent<MovementResponseEvent>>()).Returns(responseEvent.Object);
             var responsePath = $"./responsePath";
             var responseFile = $"{responsePath}/MovementResponse_V.xml";
             var expectedTicket = Guid.NewGuid();
@@ -71,7 +80,7 @@ namespace StorageSimulatorTests.UseCases
             }
             var config = new Mock<IStorageSimulatorConfig>();
             config.Setup(c => c.CommunicationPath).Returns(responsePath);
-            ISendResponseUseCase useCase = new SendResponseUseCase(config.Object);
+            ISendResponseUseCase useCase = new SendResponseUseCase(config.Object, eventAggregator.Object);
             
             var exception = Assert.Throws<IOException>(() => useCase.Execute(expected));
 

@@ -37,15 +37,7 @@ namespace StorageSimulatorTests.UseCases
             };
             request.Data.Add(new MovementData {Barcode = "12345"});
 
-            var response = _useCase.Execute(request);
-
-            response.Should().NotBeNull();
-            response.Status.Should().Be(AutomationStatus.InsertionSucceeded);
-            response.Quantity.Should().Be(request.Quantity);
-            response.Target.Should().Be(request.Target);
-            response.TargetCompartment.Should().Be(request.TargetCompartment);
-            response.Timestamp.Should().BeBefore(DateTime.UtcNow);
-            response.Ticket.Should().Be(request.Ticket);
+            _useCase.Execute(request);
         }
 
         [Fact]
@@ -247,18 +239,7 @@ namespace StorageSimulatorTests.UseCases
             };
             request.Data.Add(new MovementData {Barcode = "expected"});
 
-            var response = _useCase.Execute(request);
-
-            response.Should().NotBeNull();
-            response.Status.Should().Be(AutomationStatus.TransportSucceeded);
-            response.Quantity.Should().Be(3);
-            response.Data.First().Barcode.Should().Be("expected");
-            response.Ticket.Should().Be(request.Ticket);
-            response.Source.Should().Be(request.Source);
-            response.SourceCompartment.Should().Be(request.SourceCompartment);
-            response.Target.Should().Be(request.Target);
-            response.TargetCompartment.Should().Be(request.TargetCompartment);
-            request.Timestamp.Should().BeBefore(DateTime.UtcNow);
+            _useCase.Execute(request);
         }
 
         [Fact]

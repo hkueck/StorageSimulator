@@ -30,6 +30,14 @@ namespace StorageSimulator
             containerRegistry.Register<IWatchRequestUseCase, WatchRequestUseCase>();
             containerRegistry.Register<IWatchRequestService, WatchRequestService>();
             containerRegistry.Register<ISendResponseUseCase, SendResponseUseCase>();
+            containerRegistry.Register<ISendTransportSucceededUseCase, SenTransportSucceededUseCase>();
+            containerRegistry.Register<ISendInsertSucceededUseCase, SendInsertSucceededUseCase>();
+            containerRegistry.Register<ISendWrongSourceTargetUseCase, SendWrongSourceTargetUseCase>();
+            containerRegistry.Register<ISendWrongPartCountUseCase, SendWrongPartCountUseCase>();
+            containerRegistry.Register<ISendCountZeroUseCase, SendCountZeroUseCase>();
+            containerRegistry.Register<ISendOrderExistsUseCase, SendOrderExistsUseCase>();
+            containerRegistry.Register<ISendStoragePointOccupiedUseCase, SendStoragePointOccupiedUseCase>();
+            containerRegistry.Register<ISendStoreOccupiedUseCase, SendStoreOccupiedUseCase>();
             containerRegistry.Register<IAnalyseRequestUseCase, AnalyseRequestUseCase>();
             containerRegistry.Register<IStorageSimulatorConfig, StorageSimulatorConfig>();
             containerRegistry.Register<IMovementRequestListViewModel, MovementRequestListViewModel>();
