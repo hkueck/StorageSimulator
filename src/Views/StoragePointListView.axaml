@@ -6,30 +6,24 @@
              xmlns:views="clr-namespace:StorageSimulator.Views;assembly=StorageSimulator"
              xmlns:prism="http://prismlibrary.com/"
              prism:ViewModelLocator.AutoWireViewModel="True"
-             x:Class="StorageSimulator.Views.StoreListView">
+             x:Class="StorageSimulator.Views.StoragePointListView">
     <Grid RowDefinitions="Auto,*" ColumnDefinitions="110, 100, *">
-        <TextBlock Text="Store"
+        <TextBlock Text="Storage Point"
                    FontSize="18"
                    Grid.Row="0"
                    Grid.Column="0"
-                   Margin="10,10,10,10"/>
-        <TextBlock Text="Shelf"
-                   FontSize="18"
-                   Grid.Row="0"
-                   Grid.Column="1"
                    Margin="10,10,10,10"/>
         <TextBlock Text="Parts"
                    FontSize="18"
                    Grid.Row="0"
                    Grid.Column="2"
                    Margin="10,10,10,10"/>
-        <ListBox x:Name="Stores" 
-                 Grid.Row="1" 
+        <ListBox Grid.Row="1" 
                  Grid.ColumnSpan="3"
-                 Items="{Binding Stores}">
+                 Items="{Binding StoragePoints}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <views:StoreView />                
+                    <views:StoragePointView />                
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>

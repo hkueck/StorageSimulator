@@ -64,11 +64,12 @@ namespace StorageSimulatorTests.ViewModels
             shelf.Parts.Add(part);
             var viewModel = new ShelfViewModel(shelf, _eventAggregator);
 
-            var removePartEvent = _eventAggregator.GetEvent<PubSubEvent<RemovePartEvent>>();
-            removePartEvent.Publish(new RemovePartEvent {Shelf = shelf, Part = part});
+            var removePartEvent = _eventAggregator.GetEvent<PubSubEvent<RemovePartFromShelfEvent>>();
+            removePartEvent.Publish(new RemovePartFromShelfEvent {Shelf = shelf, Part = part});
 
             viewModel.Parts.Count.Should().Be(0);
         }
+        
         [Fact]
         public void ReceivingAddPartEventWithWrongShelfShouldNotAddPart()
         {
@@ -90,8 +91,8 @@ namespace StorageSimulatorTests.ViewModels
             shelf.Parts.Add(part);
             var viewModel = new ShelfViewModel(shelf, _eventAggregator);
 
-            var removePartEvent = _eventAggregator.GetEvent<PubSubEvent<RemovePartEvent>>();
-            removePartEvent.Publish(new RemovePartEvent {Shelf = new Shelf(), Part = part});
+            var removePartEvent = _eventAggregator.GetEvent<PubSubEvent<RemovePartFromShelfEvent>>();
+            removePartEvent.Publish(new RemovePartFromShelfEvent {Shelf = new Shelf(), Part = part});
 
             viewModel.Parts.Count.Should().Be(1);
         }

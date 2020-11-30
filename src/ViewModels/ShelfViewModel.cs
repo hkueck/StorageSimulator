@@ -1,7 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using Prism.Events;
 using Prism.Mvvm;
 using StorageSimulator.Core.Events;
@@ -13,7 +12,7 @@ namespace StorageSimulator.ViewModels
     {
         private readonly Shelf _shelf;
         private PubSubEvent<AddPartEvent> _addPartEvent;
-        private PubSubEvent<RemovePartEvent> _removePartEvent;
+        private PubSubEvent<RemovePartFromShelfEvent> _removePartEvent;
 
         public string Number
         {
@@ -36,7 +35,7 @@ namespace StorageSimulator.ViewModels
             }
 
             _addPartEvent = eventAggregator.GetEvent<PubSubEvent<AddPartEvent>>();
-            _removePartEvent = eventAggregator.GetEvent<PubSubEvent<RemovePartEvent>>();
+            _removePartEvent = eventAggregator.GetEvent<PubSubEvent<RemovePartFromShelfEvent>>();
             if (Thread.CurrentThread.IsBackground)
             {
                 _addPartEvent.Subscribe(OnPartAdded);
@@ -49,10 +48,10 @@ namespace StorageSimulator.ViewModels
             }
         }
 
-        private void OnPartRemoved(RemovePartEvent removePartEvent)
+        private void OnPartRemoved(RemovePartFromShelfEvent removePartFromShelfEvent)
         {
-            if (removePartEvent.Shelf != _shelf) return;
-            var partViewModel = Parts.FirstOrDefault(p => p.Position == removePartEvent.Part.Position);
+            if (removePartFromShelfEvent.Shelf != _shelf) return;
+            var partViewModel = Parts.FirstOrDefault(p => p.Position == removePartFromShelfEvent.Part.Position);
             if (partViewModel != null) Parts.Remove(partViewModel);
         }
 
