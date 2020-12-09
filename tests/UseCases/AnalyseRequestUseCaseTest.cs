@@ -119,6 +119,7 @@ namespace StorageSimulatorTests.UseCases
             var storageSystem = new Mock<IStorageSystem>();
             storageSystem.SetupGet(s => s.StoragePoints).Returns(storagePoints);
             storageSystem.SetupGet(s => s.Stores).Returns(stores);
+            storageSystem.SetupGet(s => s.DeliveryPoints).Returns(new List<StoragePoint>());
             storageSystem.Setup(s => s.AddStore(It.IsAny<Store>())).Callback<Store>(addStore =>
             {
                 newStore = addStore;
@@ -143,6 +144,34 @@ namespace StorageSimulatorTests.UseCases
         }
 
         [Fact]
+        public void AnalyseMovementToStoreShouldAddStoragePoint()
+        {
+            Store newStore = null;
+            var storagePoints = new List<StoragePoint>();
+            var stores = new List<Store>();
+            var storageSystem = new Mock<IStorageSystem>();
+            storageSystem.SetupGet(s => s.StoragePoints).Returns(storagePoints);
+            storageSystem.SetupGet(s => s.Stores).Returns(stores);
+            storageSystem.SetupGet(s => s.DeliveryPoints).Returns(new List<StoragePoint>());
+            storageSystem.Setup(s => s.AddStore(It.IsAny<Store>())).Callback<Store>(addStore =>
+            {
+                newStore = addStore;
+                storageSystem.SetupGet(s => s.Stores).Returns(new List<Store> {newStore});
+            });
+            _useCase.StorageSystem = storageSystem.Object;
+            var request = new MovementRequest
+            {
+                Ticket = Guid.NewGuid(), Info = "part in new store", Quantity = 1, Target = "B01",
+                TargetCompartment = "1", Task = AutomationTasks.Transport, Source = "TV01", SourceCompartment = "1", Timestamp = DateTime.UtcNow
+            };
+            request.Data.Add(new MovementData {Barcode = "12345"});
+
+            _useCase.Execute(request);
+
+            storageSystem.Verify(s => s.AddStoragePoint(It.IsAny<StoragePoint>()));
+        }
+
+        [Fact]
         public void AnalyseMovementToWorkstationShouldAddStoreAndShelf()
         {
             var expected = "12345";
@@ -152,11 +181,12 @@ namespace StorageSimulatorTests.UseCases
             var storagePoints = new List<StoragePoint> {storagePoint};
             var stores = new List<Store>();
             var storageSystem = new Mock<IStorageSystem>();
-            storageSystem.SetupGet(s => s.StoragePoints).Returns(storagePoints);
-            storageSystem.Setup(s => s.AddStoragePoint(It.IsAny<StoragePoint>())).Callback<StoragePoint>(point =>
+            storageSystem.SetupGet(s => s.StoragePoints).Returns(new List<StoragePoint>());
+            storageSystem.SetupGet(s => s.DeliveryPoints).Returns(storagePoints);
+            storageSystem.Setup(s => s.AddDeliveryPoint(It.IsAny<StoragePoint>())).Callback<StoragePoint>(point =>
             {
                 newStoragePoint = point;
-                storageSystem.SetupGet(s => s.StoragePoints).Returns(new List<StoragePoint> {newStoragePoint});
+                storageSystem.SetupGet(s => s.DeliveryPoints).Returns(new List<StoragePoint> {newStoragePoint});
             });
             storageSystem.SetupGet(s => s.Stores).Returns(stores);
             storageSystem.Setup(s => s.AddStore(It.IsAny<Store>())).Callback<Store>(addStore =>
@@ -175,7 +205,7 @@ namespace StorageSimulatorTests.UseCases
             _useCase.Execute(request);
 
             storageSystem.Verify(s => s.AddStore(It.IsAny<Store>()));
-            storageSystem.Verify(s => s.AddStoragePoint(It.IsAny<StoragePoint>()));
+            storageSystem.Verify(s => s.AddDeliveryPoint(It.IsAny<StoragePoint>()));
             newStore.Name.Should().Be("B01");
             newStore.Shelves.Count.Should().Be(1);
             var shelf = newStore.Shelves.First();
@@ -195,6 +225,7 @@ namespace StorageSimulatorTests.UseCases
             var storagePoints = new List<StoragePoint> {storagePoint};
             var stores = new List<Store> {store};
             var storageSystem = new Mock<IStorageSystem>();
+            storageSystem.SetupGet(s => s.DeliveryPoints).Returns(new List<StoragePoint>());
             storageSystem.SetupGet(s => s.StoragePoints).Returns(storagePoints);
             storageSystem.Setup(s => s.AddStoragePoint(It.IsAny<StoragePoint>())).Callback<StoragePoint>(point =>
             {
@@ -328,10 +359,11 @@ namespace StorageSimulatorTests.UseCases
             var storagePoints = new List<StoragePoint> {storagePoint};
             var storageSystem = new Mock<IStorageSystem>();
             storageSystem.SetupGet(s => s.Stores).Returns(stores);
-            storageSystem.SetupGet((s => s.StoragePoints)).Returns(storagePoints);
+            storageSystem.SetupGet((s => s.StoragePoints)).Returns(new List<StoragePoint>());
+            storageSystem.SetupGet(s => s.DeliveryPoints).Returns(storagePoints);
             storageSystem.Setup(s => s.RemovePartFromShelf(It.IsAny<Shelf>(), It.IsAny<Part>()))
                 .Callback<Shelf, Part>(((shelf1, part) => shelf1.Parts.Remove(part)));
-            storageSystem.Setup(s => s.AddPartToStoragePoint(It.IsAny<StoragePoint>(), It.IsAny<Part>()))
+            storageSystem.Setup(s => s.AddPartToDeliveryPoint(It.IsAny<StoragePoint>(), It.IsAny<Part>()))
                 .Callback<StoragePoint, Part>(((sp, part) => sp.Parts.Add(part)));
             _useCase.StorageSystem = storageSystem.Object;
 
@@ -346,6 +378,47 @@ namespace StorageSimulatorTests.UseCases
             shelf.Parts.Count.Should().Be(1);
             shelf.Parts[0].Position.Should().Be(0);
             storagePoint.Parts.Count.Should().Be(3);
+        }
+
+        [Fact]
+        public void AnalyseMovementToWorkstationShouldAddDeliveryPoint()
+        {
+            StoragePoint deliveryPoint = null;
+            var store = new Store {Name = "B01"};
+            var shelf = new Shelf {Number = "1"};
+            for (int i = 0; i < 4; i++)
+            {
+                shelf.Parts.Add(new Part {Position = i});
+            }
+
+            store.Shelves.Add(shelf);
+            var stores = new List<Store> {store};
+            var storagePoints = new List<StoragePoint>();
+            var storageSystem = new Mock<IStorageSystem>();
+            storageSystem.SetupGet(s => s.Stores).Returns(stores);
+            storageSystem.SetupGet((s => s.StoragePoints)).Returns(new List<StoragePoint>());
+            storageSystem.SetupGet((s => s.DeliveryPoints)).Returns(storagePoints);
+            storageSystem.Setup(s => s.RemovePartFromShelf(It.IsAny<Shelf>(), It.IsAny<Part>()))
+                .Callback<Shelf, Part>(((shelf1, part) => shelf1.Parts.Remove(part)));
+            storageSystem.Setup(s => s.AddDeliveryPoint(It.IsAny<StoragePoint>())).Callback<StoragePoint>(sp =>
+            {
+                deliveryPoint = sp;
+                storagePoints.Add(deliveryPoint);
+            });
+            storageSystem.Setup(s => s.AddPartToDeliveryPoint(It.IsAny<StoragePoint>(), It.IsAny<Part>()))
+                .Callback<StoragePoint, Part>(((sp, part) => sp.Parts.Add(part)));
+            _useCase.StorageSystem = storageSystem.Object;
+
+            var request = new MovementRequest
+            {
+                Ticket = Guid.NewGuid(), Info = "part to workstation", Quantity = 3, Target = "AV01",
+                TargetCompartment = "1", Task = AutomationTasks.Transport, Source = "B01", SourceCompartment = "1", Timestamp = DateTime.UtcNow
+            };
+
+            _useCase.Execute(request);
+
+            deliveryPoint.Should().NotBeNull();
+            deliveryPoint.Parts.Count.Should().Be(3);
         }
     }
 }

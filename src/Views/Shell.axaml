@@ -14,11 +14,12 @@
     <Design.DataContext>
         <vm:ShellViewModel/>
     </Design.DataContext>
-    <Grid RowDefinitions="*,*,*,*,*">
+    <Grid RowDefinitions="*,*,*,*,*,*">
         <views:StoreListView Grid.Row="0"/>
         <views:StoragePointListView Grid.Row="1"/>
-        <views:MovementRequestListView Grid.Row="2"/>
-        <views:MovementResponseListView Grid.Row="3"/>
+        <views:DeliveryPointListView Grid.Row="2"/>
+        <views:MovementRequestListView Grid.Row="3"/>
+        <views:MovementResponseListView Grid.Row="4"/>
         <views:LogListView Grid.Row="4"/>
     </Grid>
 </Window>

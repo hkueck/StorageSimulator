@@ -36,7 +36,7 @@ namespace StorageSimulator.Core.UseCases
             else
             {
                 store = StorageSystem.Stores.FirstOrDefault(sp => sp.Name == request.Source);
-                var storagePoint = StorageSystem.StoragePoints.FirstOrDefault(sp => sp.Name == request.Target);
+                var storagePoint = StorageSystem.DeliveryPoints.FirstOrDefault(sp => sp.Name == request.Target);
                 MovePartToWorkstation(store, storagePoint, request);
             }
         }
@@ -57,7 +57,7 @@ namespace StorageSimulator.Core.UseCases
                 {
                     var part = shelf.Parts.FirstOrDefault(p => p.Position == position);
                     StorageSystem.RemovePartFromShelf(shelf, part);
-                    StorageSystem.AddPartToStoragePoint(storagePoint, part);
+                    StorageSystem.AddPartToDeliveryPoint(storagePoint, part);
                 }
 
                 position--;
@@ -66,6 +66,13 @@ namespace StorageSimulator.Core.UseCases
 
         private void MovePartToStore(Store store, MovementRequest request)
         {
+            var storagePoint = StorageSystem.StoragePoints.FirstOrDefault(sp => sp.Name == request.Source);
+            if (storagePoint == null)
+            {
+                storagePoint = new StoragePoint{Name = request.Source};
+                StorageSystem.AddStoragePoint(storagePoint);
+            }
+            
             var shelf = store.Shelves.FirstOrDefault(s => s.Number == request.TargetCompartment);
             if (null == shelf)
             {
@@ -76,19 +83,25 @@ namespace StorageSimulator.Core.UseCases
             var position = shelf.Parts.Count;
             for (int i = 0; i < request.Quantity; i++)
             {
-                var part = new Part();
+                Part part;
                 var movementData = request.Data.FirstOrDefault(d => d.Index == (i + 1).ToString());
                 if (null != movementData)
                 {
-                    part.Barcode = movementData.Barcode;
+                    part = storagePoint.Parts.FirstOrDefault(p => p.Barcode == movementData.Barcode);
+                    if (part == null)
+                    {
+                        part = new Part{Barcode = movementData.Barcode};
+                    }
                 }
                 else
                 {
-                    part.Barcode = $"Part on position {position}";
+                    part = new Part{Barcode = $"Part on position {position}"};
                 }
 
                 part.Position = position;
+                StorageSystem.RemovePartFromStoragePoint(storagePoint, part);
                 StorageSystem.AddPartToShelf(shelf, part);
+                
                 position++;
             }
         }
@@ -101,17 +114,26 @@ namespace StorageSimulator.Core.UseCases
             }
 
             var storagePoint = StorageSystem.StoragePoints.First(sp => sp.Name == request.Target);
-            storagePoint.Parts.Add(new Part {Barcode = request.Data.First().Barcode, Position = storagePoint.Parts.Count});
+            var part = new Part {Position = storagePoint.Parts.Count};
+            if (request.Data != null && request.Data.Count > 0)
+            {
+                part.Barcode = request.Data.First().Barcode;
+            }
+            storagePoint.Parts.Add(part);
         }
 
         private void CheckStoresAndStoragePoints(MovementRequest request)
         {
-            if (StorageSystem.StoragePoints.All(sp => sp.Name != request.Target) && StorageSystem.Stores.All(s => s.Name != request.Target))
+            if (StorageSystem.StoragePoints.All(sp => sp.Name != request.Target) && 
+                StorageSystem.Stores.All(s => s.Name != request.Target) &&
+                StorageSystem.DeliveryPoints.All(d => d.Name != request.Target))
             {
                 CreateStoreOrStoragePoint(request.Target, request.TargetCompartment);
             }
 
-            if (StorageSystem.StoragePoints.All(sp => sp.Name != request.Source) && StorageSystem.Stores.All(s => s.Name != request.Source))
+            if (StorageSystem.StoragePoints.All(sp => sp.Name != request.Source) && 
+                StorageSystem.Stores.All(s => s.Name != request.Source) &&
+                StorageSystem.DeliveryPoints.All(d => d.Name != request.Source))
             {
                 CreateStoreOrStoragePoint(request.Source, request.SourceCompartment);
             }
@@ -119,9 +141,13 @@ namespace StorageSimulator.Core.UseCases
 
         private void CreateStoreOrStoragePoint(string name, string shelf)
         {
-            if (name.Contains("TV") || name.Contains("AV"))
+            if (name.Contains("TV"))
             {
                 StorageSystem.AddStoragePoint(new StoragePoint {Name = name});
+            }
+            else if (name.Contains("AV"))
+            {
+                StorageSystem.AddDeliveryPoint(new StoragePoint{Name =  name});
             }
             else
             {

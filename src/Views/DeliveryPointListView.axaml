@@ -6,9 +6,9 @@
              xmlns:views="clr-namespace:StorageSimulator.Views;assembly=StorageSimulator"
              xmlns:prism="http://prismlibrary.com/"
              prism:ViewModelLocator.AutoWireViewModel="True"
-             x:Class="StorageSimulator.Views.StoragePointListView">
+             x:Class="StorageSimulator.Views.DeliveryPointListView">
     <Grid RowDefinitions="Auto,*" ColumnDefinitions="210, *">
-        <TextBlock Text="Storage Point"
+        <TextBlock Text="Delivery Point"
                    FontSize="18"
                    Grid.Row="0"
                    Grid.Column="0"

@@ -50,6 +50,20 @@ namespace StorageSimulatorTests.ViewModels
         }
 
         [Fact]
+        public void ReceivingInsertPartToDeliveryShouldAddPart()
+        {
+            var insertEvent = _eventAggregator.GetEvent<PubSubEvent<InsertPartToDeliveryEvent>>();
+            var part = new Part{Barcode = "expected"};
+            var deliveryPoint = new StoragePoint{Name = "deliveryPoint"};
+            var viewModel = new StoragePointViewModel(deliveryPoint, _eventAggregator);
+            
+            insertEvent.Publish(new InsertPartToDeliveryEvent{DeliveryPoint = deliveryPoint, Part = part});
+
+            viewModel.Parts.Count.Should().Be(1);
+            viewModel.Parts[0].Barcode.Should().Be("expected");
+        }
+
+        [Fact]
         public void ReceivingRemovePartShouldRemovePart()
         {
             var removeEvent = _eventAggregator.GetEvent<PubSubEvent<RemovePartFromStoragePointEvent>>();

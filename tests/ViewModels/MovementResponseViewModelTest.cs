@@ -38,7 +38,7 @@ namespace StorageSimulatorTests.ViewModels
             viewModel.Target.Should().Be(expectedTarget);
             viewModel.TargetShelf.Should().Be(expectedTargetShelf);
             viewModel.Quantity.Should().Be(expectedQuantity);
-            viewModel.Timestamp.Should().BeBefore(DateTime.UtcNow);
+            viewModel.Timestamp.Should().BeBefore(DateTime.Now);
             viewModel.Ticket.Should().Be(expectedTicket);
             viewModel.Status.Should().Be(expectedStatus);
             viewModel.Barcode.Should().Be(expectedData.Barcode);

@@ -1,7 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml.Serialization;
 using Prism.Events;
+using StorageSimulator.Core.Events;
 using StorageSimulator.Core.Interfaces;
 using MovementRequest = StorageSimulator.Core.Model.MovementRequest;
 
@@ -13,6 +16,7 @@ namespace StorageSimulator.Infrastructure
         private readonly IEventAggregator _eventAggregator;
         private readonly IStorageSimulatorConfig _configuration;
         private FileSystemWatcher _watcher;
+        private IList<Guid> _receivedTickets = new List<Guid>();
 
         private string RequestFile => Path.Combine(_configuration.CommunicationPath, MovementRequestFile);
 
@@ -43,20 +47,27 @@ namespace StorageSimulator.Infrastructure
 
         private void RequestOnCreated(object sender, FileSystemEventArgs e)
         {
-            var xmlSerializer = new XmlSerializer(typeof(MovementRequest));
-            if (File.Exists(RequestFile))
+            try
             {
-                using var reader = new FileStream(RequestFile, FileMode.Open);
-                var request = (MovementRequest) xmlSerializer.Deserialize(reader);
-                SendRequest(request);
-                try
+                var xmlSerializer = new XmlSerializer(typeof(MovementRequest));
+                if (File.Exists(RequestFile))
                 {
+                    using var reader = new FileStream(RequestFile, FileMode.Open);
+                    var request = (MovementRequest) xmlSerializer.Deserialize(reader);
+                    reader.Close();
+                    if (_receivedTickets.All(t => t != request.Ticket))
+                    {
+                        _receivedTickets.Add(request.Ticket);
+                        SendRequest(request);
+                    }
+
                     File.Delete(RequestFile);
                 }
-                catch (Exception)
-                {
-                    // ignored
-                }
+            }
+            catch (Exception exception)
+            {
+                var exceptionEvent = _eventAggregator.GetEvent<PubSubEvent<ExceptionEvent>>();
+                exceptionEvent.Publish(new ExceptionEvent {Exception = exception});
             }
         }
 

@@ -5,8 +5,30 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              xmlns:views="clr-namespace:StorageSimulator.Views;assembly=StorageSimulator"
              xmlns:prism="http://prismlibrary.com/"
-             prism:ViewModelLocator.AutoWireViewModel="True"
              x:Class="StorageSimulator.Views.StoragePointView">
     <Grid>
+        <Border Background="Blue">
+            <Grid ColumnDefinitions="210, *">
+                <TextBlock Text="{Binding Name}"
+                           Grid.Column="0"
+                           FontSize="16"
+                           Margin="10,2,10,2"
+                           Foreground="Yellow"/>
+                <ItemsControl x:Name="StoragePointParts" Grid.Column="1" Items="{Binding Parts}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                       <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                           <TextBlock Text="{Binding Barcode}" 
+                                      Margin="0,2,10,2"
+                                      FontSize="16"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
+        </Border>    
     </Grid>           
 </UserControl>

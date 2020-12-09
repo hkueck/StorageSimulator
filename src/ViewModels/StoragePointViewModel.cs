@@ -15,6 +15,7 @@ namespace StorageSimulator.ViewModels
         private PubSubEvent<InsertPartEvent> _insertPartEvent;
         private PubSubEvent<RemovePartFromStoragePointEvent> _removePartEvent;
         private StoragePoint _storagePoint;
+        private PubSubEvent<InsertPartToDeliveryEvent> _insertPartToDeliveryEvent;
 
         public ObservableCollection<PartViewModel> Parts { get; } = new ObservableCollection<PartViewModel>();
 
@@ -24,16 +25,19 @@ namespace StorageSimulator.ViewModels
             Name = storagePoint.Name;
             _storagePoint = storagePoint;
             _insertPartEvent = _eventAggregator.GetEvent<PubSubEvent<InsertPartEvent>>();
+            _insertPartToDeliveryEvent = _eventAggregator.GetEvent<PubSubEvent<InsertPartToDeliveryEvent>>();
             _removePartEvent = _eventAggregator.GetEvent<PubSubEvent<RemovePartFromStoragePointEvent>>();
             if (Thread.CurrentThread.IsBackground)
             {
                 _insertPartEvent.Subscribe(OnInsertPart);
                 _removePartEvent.Subscribe(OnRemovePart);
+                _insertPartToDeliveryEvent.Subscribe(OnInsertPartToDelivery);
             }
             else
             {
                 _insertPartEvent.Subscribe(OnInsertPart, ThreadOption.UIThread);
                 _removePartEvent.Subscribe(OnRemovePart, ThreadOption.UIThread);
+                _insertPartToDeliveryEvent.Subscribe(OnInsertPartToDelivery);
             }
 
             foreach (var part in storagePoint.Parts)
@@ -42,19 +46,23 @@ namespace StorageSimulator.ViewModels
             }
         }
 
-        private void OnRemovePart(RemovePartFromStoragePointEvent obj)
+        private void OnInsertPartToDelivery(InsertPartToDeliveryEvent partToDeliveryEvent)
         {
-            if (obj.StoragePoint != _storagePoint) return;
-            var partViewModel = Parts.FindFirst(vm => vm.Barcode == obj.Part.Barcode);
+            if (partToDeliveryEvent.DeliveryPoint.Name == _name)
+                Parts.Add(new PartViewModel(partToDeliveryEvent.Part));
+        }
+
+        private void OnRemovePart(RemovePartFromStoragePointEvent removePartEvent)
+        {
+            if (removePartEvent.StoragePoint != _storagePoint) return;
+            var partViewModel = Parts.FindFirst(vm => vm.Barcode == removePartEvent.Part.Barcode);
             if (partViewModel != null) Parts.Remove(partViewModel);
         }
 
         private void OnInsertPart(InsertPartEvent insertPartEvent)
         {
             if (insertPartEvent.StoragePoint == _name)
-            {
                 Parts.Add(new PartViewModel(insertPartEvent.Part));
-            }
         }
 
         public string Name
