@@ -10,7 +10,11 @@ namespace StorageSimulator.ViewModels
     {
         public ObservableCollection<MovementResponseViewModel> Responses { get; } = new ObservableCollection<MovementResponseViewModel>();
 
-        public MovementResponseListViewModel(IEventAggregator eventAggregator)
+        public MovementResponseListViewModel()
+        {
+        }
+
+        public MovementResponseListViewModel(IEventAggregator eventAggregator): this()
         {
             var responseEvent = eventAggregator.GetEvent<PubSubEvent<MovementResponseEvent>>();
             if (Thread.CurrentThread.IsBackground)

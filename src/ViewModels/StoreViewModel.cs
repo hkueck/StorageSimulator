@@ -25,7 +25,11 @@ namespace StorageSimulator.ViewModels
             }
         }
 
-        public StoreViewModel(Store store, IEventAggregator eventAggregator)
+        public StoreViewModel()
+        {
+        }
+
+        public StoreViewModel(Store store, IEventAggregator eventAggregator): this()
         {
             _store = store;
             _eventAggregator = eventAggregator;

@@ -88,7 +88,6 @@ namespace StorageSimulatorTests.UseCases
         [Fact]
         public void AnalyseNewPartForStoragePointShouldAddPartToStoragePoint()
         {
-            var expected = "12345";
             var storagePoint = new StoragePoint {Name = "TV01"};
             var storagePoints = new List<StoragePoint> {storagePoint};
             var storageSystem = new Mock<IStorageSystem>();
@@ -103,10 +102,7 @@ namespace StorageSimulatorTests.UseCases
 
             _useCase.Execute(request);
 
-            storagePoint.Parts.Count.Should().Be(1);
-            var part = storagePoint.Parts.First();
-            part.Barcode.Should().Be(expected);
-            part.Position.Should().Be(0);
+            storageSystem.Verify(s => s.AddPartToStoragePoint(It.IsAny<StoragePoint>(), It.IsAny<Part>()));
         }
 
         [Fact]
@@ -146,7 +142,7 @@ namespace StorageSimulatorTests.UseCases
         [Fact]
         public void AnalyseMovementToStoreShouldAddStoragePoint()
         {
-            Store newStore = null;
+            Store newStore;
             var storagePoints = new List<StoragePoint>();
             var stores = new List<Store>();
             var storageSystem = new Mock<IStorageSystem>();

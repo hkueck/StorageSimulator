@@ -12,7 +12,11 @@ namespace StorageSimulator.ViewModels
         private readonly IEventAggregator _eventAggregator;
         public ObservableCollection<StoragePointViewModel> DeliveryPoints { get; } = new ObservableCollection<StoragePointViewModel>();
 
-        public DeliveryPointListViewModel(IStorageSystem storageSystem, IEventAggregator eventAggregator)
+        public DeliveryPointListViewModel()
+        {
+        }
+
+        public DeliveryPointListViewModel(IStorageSystem storageSystem, IEventAggregator eventAggregator): this()
         {
             _storageSystem = storageSystem;
             _eventAggregator = eventAggregator;
@@ -31,7 +35,7 @@ namespace StorageSimulator.ViewModels
 
         private void OnAddDeliveryPoint(AddDeliveryPointEvent addDeliveryPointEvent)
         {
-            DeliveryPoints.Add(new StoragePointViewModel(addDeliveryPointEvent.DeliveryPoint, _eventAggregator));
+            DeliveryPoints.Insert(0, new StoragePointViewModel(addDeliveryPointEvent.DeliveryPoint, _eventAggregator));
         }
     }
 }

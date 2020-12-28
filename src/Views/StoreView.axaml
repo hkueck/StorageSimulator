@@ -3,8 +3,12 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:views="clr-namespace:StorageSimulator.Views;assembly=StorageSimulator"
+             xmlns:viewModels="clr-namespace:StorageSimulator.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="StorageSimulator.Views.StoreView">
+    <Design.DataContext>
+        <viewModels:StoreViewModel/>
+    </Design.DataContext>
     <Grid>
         <Border Background="Blue">
             <Grid ColumnDefinitions="100, *">

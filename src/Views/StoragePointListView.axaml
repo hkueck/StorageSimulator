@@ -5,8 +5,12 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              xmlns:views="clr-namespace:StorageSimulator.Views;assembly=StorageSimulator"
              xmlns:prism="http://prismlibrary.com/"
+             xmlns:viewModels="clr-namespace:StorageSimulator.ViewModels"
              prism:ViewModelLocator.AutoWireViewModel="True"
              x:Class="StorageSimulator.Views.StoragePointListView">
+    <Design.DataContext>
+        <viewModels:StoragePointListViewModel/>
+    </Design.DataContext>                      
     <Grid RowDefinitions="Auto,*" ColumnDefinitions="210, *">
         <TextBlock Text="Storage Point"
                    FontSize="18"
@@ -16,13 +20,14 @@
         <TextBlock Text="Parts"
                    FontSize="18"
                    Grid.Row="0"
-                   Grid.Column="2"
+                   Grid.Column="1"
                    Margin="10,10,10,10"/>
         <ListBox Grid.Row="1" 
-                 Grid.ColumnSpan="2"
+                 Grid.ColumnSpan="2" 
+                 Grid.Column="0"
                  Items="{Binding StoragePoints}">
             <ListBox.ItemTemplate>
-                <DataTemplate>
+                <DataTemplate DataType="viewModels:StoragePointViewModel">
                     <views:StoragePointView />                
                 </DataTemplate>
             </ListBox.ItemTemplate>

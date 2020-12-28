@@ -2,10 +2,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:StorageSimulator.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             xmlns:views="clr-namespace:StorageSimulator.Views;assembly=StorageSimulator"
-             xmlns:prism="http://prismlibrary.com/"
              x:Class="StorageSimulator.Views.StoragePointView">
+    <Design.DataContext>
+        <viewModels:StoragePointViewModel/>
+    </Design.DataContext>
     <Grid>
         <Border Background="Blue">
             <Grid ColumnDefinitions="210, *">
@@ -21,7 +23,7 @@
                     </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
-                        <DataTemplate>
+                        <DataTemplate DataType="viewModels:PartViewModel">
                            <TextBlock Text="{Binding Barcode}" 
                                       Margin="0,2,10,2"
                                       FontSize="16"/>

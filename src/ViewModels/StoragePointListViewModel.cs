@@ -31,6 +31,10 @@ namespace StorageSimulator.ViewModels
             }
         }
 
+        public StoragePointListViewModel()
+        {
+        }
+
         private void OnAddStoragePoint(AddStoragePointEvent storagePointEvent)
         {
             StoragePoints.Add(new StoragePointViewModel(storagePointEvent.StoragePoint, _eventAggregator));

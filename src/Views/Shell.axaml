@@ -20,6 +20,6 @@
         <views:DeliveryPointListView Grid.Row="2"/>
         <views:MovementRequestListView Grid.Row="3"/>
         <views:MovementResponseListView Grid.Row="4"/>
-        <views:LogListView Grid.Row="4"/>
+        <views:LogListView Grid.Row="5"/>
     </Grid>
 </Window>

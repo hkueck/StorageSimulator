@@ -22,7 +22,11 @@ namespace StorageSimulator.ViewModels
             }
         }
 
-        public MovementRequestListViewModel(IEventAggregator eventAggregator)
+        public MovementRequestListViewModel()
+        {
+        }
+
+        public MovementRequestListViewModel(IEventAggregator eventAggregator): this()
         {
             var requestEvent = eventAggregator.GetEvent<PubSubEvent<MovementRequestEvent>>();
             if (!Thread.CurrentThread.IsBackground)

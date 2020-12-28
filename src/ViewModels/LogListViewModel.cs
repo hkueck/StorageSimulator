@@ -12,7 +12,11 @@ namespace StorageSimulator.ViewModels
     {
         public ObservableCollection<LogViewModel> Logs { get; } = new ObservableCollection<LogViewModel>();
 
-        public LogListViewModel(IEventAggregator eventAggregator)
+        public LogListViewModel()
+        {
+        }
+
+        public LogListViewModel(IEventAggregator eventAggregator): this()
         {
             var exceptionEvent = eventAggregator.GetEvent<PubSubEvent<ExceptionEvent>>();
             if (Thread.CurrentThread.IsBackground)

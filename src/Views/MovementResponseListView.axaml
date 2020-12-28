@@ -4,8 +4,12 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              xmlns:prism="http://prismlibrary.com/"
+             xmlns:viewModels="clr-namespace:StorageSimulator.ViewModels"
              prism:ViewModelLocator.AutoWireViewModel="True"
              x:Class="StorageSimulator.Views.MovementResponseListView">
+    <Design.DataContext>
+        <viewModels:MovementResponseListViewModel/>
+    </Design.DataContext>
     <Grid RowDefinitions="Auto,*">
         <TextBlock Text="Responses"
                    FontSize="18"
@@ -17,7 +21,7 @@
            <ListBox.ItemTemplate>
                <DataTemplate>
                    <Border Background="Blue">
-                       <Grid ColumnDefinitions="180, 180, 150, 80, 80, 80, 80">
+                       <Grid ColumnDefinitions="280, 180, 150, 80, 80, 80, 80">
                            <TextBlock Text="{Binding Name}"
                                       Grid.Column="0"
                                       Margin="10,2,10,2"
@@ -34,7 +38,7 @@
                                       Grid.Column="3"
                                       Margin="10,2,10,2"
                                       Foreground="Yellow"/>
-                           <TextBlock Text="{Binding SorceShelf}"
+                           <TextBlock Text="{Binding SourceShelf}"
                                       Grid.Column="4"
                                       Margin="10,2,10,2"
                                       Foreground="Yellow"/>

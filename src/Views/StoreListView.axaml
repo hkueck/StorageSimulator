@@ -5,8 +5,12 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              xmlns:views="clr-namespace:StorageSimulator.Views;assembly=StorageSimulator"
              xmlns:prism="http://prismlibrary.com/"
+             xmlns:viewModels="clr-namespace:StorageSimulator.ViewModels"
              prism:ViewModelLocator.AutoWireViewModel="True"
              x:Class="StorageSimulator.Views.StoreListView">
+    <Design.DataContext>
+        <viewModels:StoreListViewModel/>
+    </Design.DataContext>
     <Grid RowDefinitions="Auto,*" ColumnDefinitions="110, 100, *">
         <TextBlock Text="Store"
                    FontSize="18"

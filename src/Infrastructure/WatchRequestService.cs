@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Prism.Events;
 using StorageSimulator.Core.Events;
@@ -16,7 +17,7 @@ namespace StorageSimulator.Infrastructure
         private readonly IEventAggregator _eventAggregator;
         private readonly IStorageSimulatorConfig _configuration;
         private FileSystemWatcher _watcher;
-        private IList<Guid> _receivedTickets = new List<Guid>();
+        private readonly IList<Guid> _receivedTickets = new List<Guid>();
 
         private string RequestFile => Path.Combine(_configuration.CommunicationPath, MovementRequestFile);
 
@@ -37,8 +38,7 @@ namespace StorageSimulator.Infrastructure
 
         public void Run()
         {
-            _watcher = new FileSystemWatcher(_configuration.CommunicationPath);
-            _watcher.Filter = "*";
+            _watcher = new FileSystemWatcher(_configuration.CommunicationPath) {Filter = "*"};
             _watcher.Created += RequestOnCreated;
             _watcher.Renamed += RequestOnCreated;
             _watcher.Changed += RequestOnCreated;
@@ -52,6 +52,10 @@ namespace StorageSimulator.Infrastructure
                 var xmlSerializer = new XmlSerializer(typeof(MovementRequest));
                 if (File.Exists(RequestFile))
                 {
+                    while (IsFileLocked(RequestFile))
+                    {
+                        Task.Delay(1000).Wait();
+                    }
                     using var reader = new FileStream(RequestFile, FileMode.Open);
                     var request = (MovementRequest) xmlSerializer.Deserialize(reader);
                     reader.Close();
@@ -71,10 +75,24 @@ namespace StorageSimulator.Infrastructure
             }
         }
 
+        private bool IsFileLocked(string file)
+        {
+            try
+            {
+                using FileStream stream = File.Open(file, FileMode.Open, FileAccess.Read, FileShare.None);
+                stream.Close();
+            }
+            catch (IOException)
+            {
+                return true;
+            }
+            return false;
+        }
+
         private void SendRequest(MovementRequest request)
         {
-            var movementRequest = new Core.Events.MovementRequestEvent {MovementRequest = request};
-            var requestEvent = _eventAggregator.GetEvent<PubSubEvent<Core.Events.MovementRequestEvent>>();
+            var movementRequest = new MovementRequestEvent {MovementRequest = request};
+            var requestEvent = _eventAggregator.GetEvent<PubSubEvent<MovementRequestEvent>>();
             requestEvent.Publish(movementRequest);
         }
     }

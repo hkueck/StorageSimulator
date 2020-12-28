@@ -19,7 +19,11 @@ namespace StorageSimulator.ViewModels
 
         public ObservableCollection<PartViewModel> Parts { get; } = new ObservableCollection<PartViewModel>();
 
-        public StoragePointViewModel(StoragePoint storagePoint, IEventAggregator eventAggregator)
+        public StoragePointViewModel()
+        {
+        }
+
+        public StoragePointViewModel(StoragePoint storagePoint, IEventAggregator eventAggregator): this()
         {
             _eventAggregator = eventAggregator;
             Name = storagePoint.Name;
@@ -37,7 +41,7 @@ namespace StorageSimulator.ViewModels
             {
                 _insertPartEvent.Subscribe(OnInsertPart, ThreadOption.UIThread);
                 _removePartEvent.Subscribe(OnRemovePart, ThreadOption.UIThread);
-                _insertPartToDeliveryEvent.Subscribe(OnInsertPartToDelivery);
+                _insertPartToDeliveryEvent.Subscribe(OnInsertPartToDelivery, ThreadOption.UIThread);
             }
 
             foreach (var part in storagePoint.Parts)

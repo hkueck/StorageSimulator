@@ -119,7 +119,7 @@ namespace StorageSimulator.Core.UseCases
             {
                 part.Barcode = request.Data.First().Barcode;
             }
-            storagePoint.Parts.Add(part);
+            StorageSystem.AddPartToStoragePoint(storagePoint, part);
         }
 
         private void CheckStoresAndStoragePoints(MovementRequest request)

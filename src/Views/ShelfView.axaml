@@ -2,21 +2,27 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:StorageSimulator.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="StorageSimulator.Views.ShelfView">
+    <Design.DataContext>
+        <viewModels:ShelfViewModel/>
+    </Design.DataContext>
     <Grid ColumnDefinitions="100, *">
         <TextBlock Text="{Binding Number}"
                    FontSize="16"
                    Grid.Column="0"
                    Margin="10,2,10,2"/>
-        <ItemsControl x:Name="tStack" Grid.Column="1" Items="{Binding Parts}">
+        <ItemsControl x:Name="TStack"
+                      Grid.Column="1" 
+                      Items="{Binding Parts}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                    <StackPanel Orientation="Horizontal"/>
                 </ItemsPanelTemplate>
            </ItemsControl.ItemsPanel>
            <ItemsControl.ItemTemplate>
-               <DataTemplate>
+               <DataTemplate DataType="viewModels:PartViewModel">
                    <TextBlock Text="{Binding Barcode}" 
                               Margin="0,0,10,0"
                               FontSize="16"/>

@@ -12,7 +12,11 @@ namespace StorageSimulator.ViewModels
         private IEventAggregator _eventAggregator;
         public ObservableCollection<StoreViewModel> Stores { get; } = new ObservableCollection<StoreViewModel>();
 
-        public StoreListViewModel(IStorageSystem storageSystem, IEventAggregator eventAggregator)
+        public StoreListViewModel()
+        {
+        }
+
+        public StoreListViewModel(IStorageSystem storageSystem, IEventAggregator eventAggregator): this()
         {
             _eventAggregator = eventAggregator;
             foreach (var store in storageSystem.Stores)

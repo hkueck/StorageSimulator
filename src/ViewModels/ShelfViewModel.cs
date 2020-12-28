@@ -26,7 +26,11 @@ namespace StorageSimulator.ViewModels
 
         public ObservableCollection<PartViewModel> Parts { get; } = new ObservableCollection<PartViewModel>();
 
-        public ShelfViewModel(Shelf shelf, IEventAggregator eventAggregator)
+        public ShelfViewModel()
+        {
+        }
+
+        public ShelfViewModel(Shelf shelf, IEventAggregator eventAggregator):this()
         {
             _shelf = shelf;
             foreach (var part in shelf.Parts)
@@ -58,7 +62,7 @@ namespace StorageSimulator.ViewModels
         private void OnPartAdded(AddPartEvent addPartEvent)
         {
             if (addPartEvent.Shelf != _shelf) return;
-            Parts.Add(new PartViewModel(addPartEvent.Part));
+            Parts.Insert(0, new PartViewModel(addPartEvent.Part));
         }
     }
 }

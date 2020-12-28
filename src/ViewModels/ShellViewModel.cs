@@ -10,5 +10,9 @@ namespace StorageSimulator.ViewModels
         {
             _storageSystem = storageSystem;
         }
+
+        public ShellViewModel()
+        {
+        }
     }
 }

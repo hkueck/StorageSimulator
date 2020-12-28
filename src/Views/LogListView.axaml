@@ -4,8 +4,12 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              xmlns:prism="http://prismlibrary.com/"
+             xmlns:viewModels="clr-namespace:StorageSimulator.ViewModels"
              prism:ViewModelLocator.AutoWireViewModel="True"
              x:Class="StorageSimulator.Views.LogListView">
+    <Design.DataContext>
+        <viewModels:LogListViewModel/>
+    </Design.DataContext>
     <Grid RowDefinitions="Auto,*">
         <TextBlock Text="Logs"
                    FontSize="18"
@@ -15,7 +19,7 @@
         <ListBox Grid.Row="1" 
                  Items="{Binding Logs}">
            <ListBox.ItemTemplate>
-               <DataTemplate>
+               <DataTemplate DataType="viewModels:LogViewModel">
                    <Border Background="Blue">
                        <Grid ColumnDefinitions="80, 780">
                            <TextBlock Text="{Binding Type}"
