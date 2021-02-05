@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using Avalonia;
 using Avalonia.Dialogs;
 using Avalonia.ReactiveUI;
@@ -27,7 +28,18 @@ namespace StorageSimulator
         static int Main(string[] args)
         {
             var builder = BuildAvaloniaApp();
+            SilenceConsole();
             return builder.StartWithClassicDesktopLifetime(args);
         }
-    }
+        
+        static void SilenceConsole()
+        {
+            new Thread(() =>
+                {
+                    Console.CursorVisible = false;
+                    while (true)
+                        Console.ReadKey(true);
+                })
+                { IsBackground = true }.Start();
+        }   }
 }

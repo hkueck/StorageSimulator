@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
@@ -21,31 +22,39 @@ namespace StorageSimulator.Core.UseCases
 
         public void Execute(MovementResponse movementResponse)
         {
-            var responseFile = $"{_configuration.CommunicationPath}/MovementResponse_V.xml";
-            var tempFile = $"{_configuration.CommunicationPath}/MovementResponse_V.tmp";
-            if (!Directory.Exists(_configuration.CommunicationPath))
+            try
             {
-                Directory.CreateDirectory(_configuration.CommunicationPath);
-            }
-
-            XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
-            ns.Add("","");
-            var serializer = new XmlSerializer(typeof(MovementResponse));
-            var settings = new XmlWriterSettings();
-            settings.Indent = true;
-            settings.OmitXmlDeclaration = true;
-            using (var stream = new StreamWriter(tempFile))
-            {
-                using (var writer = XmlWriter.Create(stream, settings))
+                var responseFile = $"{_configuration.CommunicationPath}/MovementResponse_V.xml";
+                var tempFile = $"{_configuration.CommunicationPath}/MovementResponse_V.tmp";
+                if (!Directory.Exists(_configuration.CommunicationPath))
                 {
-                    serializer.Serialize(writer, movementResponse, ns);
-                    writer.Flush();
-                    writer.Close();
+                    Directory.CreateDirectory(_configuration.CommunicationPath);
                 }
+
+                XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
+                ns.Add("","");
+                var serializer = new XmlSerializer(typeof(MovementResponse));
+                var settings = new XmlWriterSettings();
+                settings.Indent = true;
+                settings.OmitXmlDeclaration = true;
+                using (var stream = new StreamWriter(tempFile))
+                {
+                    using (var writer = XmlWriter.Create(stream, settings))
+                    {
+                        serializer.Serialize(writer, movementResponse, ns);
+                        writer.Flush();
+                        writer.Close();
+                    }
+                }
+                File.Move(tempFile, responseFile);
+                var responseEvent = _eventAggregator.GetEvent<PubSubEvent<MovementResponseEvent>>();
+                responseEvent.Publish(new MovementResponseEvent {Response = movementResponse});
             }
-            File.Move(tempFile, responseFile);
-            var responseEvent = _eventAggregator.GetEvent<PubSubEvent<MovementResponseEvent>>();
-            responseEvent.Publish(new MovementResponseEvent {Response = movementResponse});
+            catch (Exception exception)
+            {
+                var exceptionEvent = _eventAggregator.GetEvent<PubSubEvent<ExceptionEvent>>();
+                exceptionEvent.Publish(new ExceptionEvent {Exception = exception});
+            }
         }
     }
 }

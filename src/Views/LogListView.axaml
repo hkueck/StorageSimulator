@@ -10,18 +10,26 @@
     <Design.DataContext>
         <viewModels:LogListViewModel/>
     </Design.DataContext>
-    <Grid RowDefinitions="Auto,*">
+    <Grid RowDefinitions="Auto, Auto,*">
         <TextBlock Text="Logs"
                    FontSize="18"
                    Grid.Row="0"
                    Grid.ColumnSpan="3"
                    Margin="10,10,10,10"/>
-        <ListBox Grid.Row="1" 
+        <Grid Grid.Row="1" ColumnDefinitions="180, 780">
+            <TextBlock Text="Type"
+                       Grid.Column="0"
+                       Width="100"/>
+            <TextBlock Text="Message"
+                       Grid.Column="1"
+                       Width="100"/>
+        </Grid>
+        <ListBox Grid.Row="2" 
                  Items="{Binding Logs}">
            <ListBox.ItemTemplate>
                <DataTemplate DataType="viewModels:LogViewModel">
                    <Border Background="Blue">
-                       <Grid ColumnDefinitions="80, 780">
+                       <Grid ColumnDefinitions="180, 780">
                            <TextBlock Text="{Binding Type}"
                                       Grid.Column="0"
                                       Margin="10,2,10,2"
