@@ -68,7 +68,7 @@
         </Grid>
         <Grid Grid.Row="1"
               Margin="0,20,0,10"
-              ColumnDefinitions="280, 280, 180, 150, 100, 100, 100, 100">
+              ColumnDefinitions="280, 280, 180, 150, 100, 100, 100, 100, 100">
             <TextBlock Text="Ticket"
                        Grid.Column="0"
                        Width="100"/>
@@ -93,6 +93,9 @@
             <TextBlock Text="Target Shelf"
                        Grid.Column="7"
                        Width="100"/>
+            <TextBlock Text="Quantity"
+                       Grid.Column="8"
+                       Width="100"/>
         </Grid>
         <ListBox x:Name="Request" 
                  Grid.Row="2" 
@@ -102,7 +105,7 @@
            <ListBox.ItemTemplate>
                <DataTemplate>
                    <Border Background="Blue">
-                       <Grid ColumnDefinitions="280, 280, 180, 150, 100, 100, 100, 100">
+                       <Grid ColumnDefinitions="280, 280, 180, 150, 100, 100, 100, 100, 100">
                            <TextBlock Text="{Binding Ticket}"
                                       Grid.Column="0"
                                       Margin="10,2,10,2"
@@ -133,6 +136,10 @@
                                       Foreground="Yellow"/>
                            <TextBlock Text="{Binding TargetShelf}"
                                       Grid.Column="7"
+                                      Margin="10,2,10,2"
+                                      Foreground="Yellow"/>
+                           <TextBlock Text="{Binding Quantity}"
+                                      Grid.Column="8"
                                       Margin="10,2,10,2"
                                       Foreground="Yellow"/>
                        </Grid>

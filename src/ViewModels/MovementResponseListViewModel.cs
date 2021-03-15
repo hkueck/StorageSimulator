@@ -26,7 +26,7 @@ namespace StorageSimulator.ViewModels
         private void OnReceiveResponse(MovementResponseEvent response)
         {
             var viewModel = new MovementResponseViewModel(response.Response);
-            Responses.Add(viewModel);
+            Responses.Insert(0, viewModel);
         }
     }
 }
